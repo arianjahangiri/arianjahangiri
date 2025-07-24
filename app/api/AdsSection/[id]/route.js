@@ -60,7 +60,6 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(updated, { status: 200 });
   } catch (error) {
-    console.error("PUT Error:", error);
     return NextResponse.json({ message: "خطا در ویرایش تبلیغ" }, { status: 500 });
   }
 }
