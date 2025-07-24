@@ -1,15 +1,17 @@
  
-import categories from "@/app/modls/categories-menu/categories";
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
-import { NextResponse } from "next/server";
  
+import { NextResponse } from "next/server";
+
 export async function GET() {
   await connect();
- 
+
   try {
     const featuredProducts = await product.find({}).populate({
-      path: "categories",
+      path: "category", // نام فیلد در مدل Product
+
+      
     })
       .sort({ views: -1 })
       .limit(8)
