@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   await connect();
-
+ 
   try {
     const featuredProducts = await product.find({}).populate({
-      path: "category",
+      path: "categories",
     })
       .sort({ views: -1 })
       .limit(8)
