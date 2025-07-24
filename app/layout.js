@@ -5,7 +5,6 @@ import "./Style/cart.css";
 import "./Style/profile.css";
 import "./Style/style.css";
  
- import { SpeedInsights } from "@vercel/speed-insights"
  
 import Script from "next/script";
 import Footer from "./component/layout/Footer";
@@ -58,7 +57,7 @@ export default function RootLayout({ children }) {
         <CartProvider>
           <Header />
           {children}
-               <SpeedInsights />
+            
           <Footer />
         </CartProvider>
       </SessionProviderWrapper>
