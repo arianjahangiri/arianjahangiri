@@ -42,7 +42,7 @@ const Page = () => {
 
     try {  
       // Sending the form data to the server  
-      await fetch("http://localhost:3000/api/discountCode", {  
+      await fetch("/api/discountCode", {  
         method: "POST",  
         body: JSON.stringify({ status, Translations, discountPercentage, discountcode }),  
         headers: { "Content-Type": "application/json" },  

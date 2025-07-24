@@ -25,7 +25,7 @@ const EditPostPage = () => {
     // Function to fetch user data based on the ID
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/User/${id}`);
+        const res = await fetch(`
         if (!res.ok) throw new Error("خطا در بارگذاری پست‌ها");
 
         const jsonData = await res.json();
@@ -75,7 +75,7 @@ const EditPostPage = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/User/${id}`, {
+      const res = await fetch(`
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, status }),

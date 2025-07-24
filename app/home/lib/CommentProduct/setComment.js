@@ -1,5 +1,5 @@
 export async function setComment(text, productId, userId, isApproval) {
-  const res = await fetch("http://localhost:3000/api/comment", {
+  const res = await fetch("/api/comment", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

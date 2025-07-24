@@ -16,7 +16,7 @@ const Page = () => {
   const fetchDel = async (id) => {
     if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;
     try {
-        await fetch(`http://localhost:3000/api/SlideShow/${id}`, {
+        await fetch(`/api/SlideShow/${id}`, {
 
         method: "DELETE",
       });

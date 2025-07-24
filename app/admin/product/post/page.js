@@ -15,7 +15,7 @@ const Page = () => {
   const fetchDel = async (id) => {
     if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;
     try {
-      await fetch(`http://localhost:3000/api/product/${id}`, {
+      await fetch(`/api/product/${id}`, {
         method: "DELETE",
       });
       fetchData();
@@ -27,7 +27,7 @@ const Page = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3000/api/product");
+      const res = await fetch("/api/product");
       if (!res.ok) throw new Error("خطا در بارگذاری محصولات");
 
       const jsonData = await res.json();

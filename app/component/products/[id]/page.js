@@ -8,7 +8,7 @@ import AddTOCartButton from '../../home/AddTOCartButton';
 
 async function getProductData(id) {
   const res = await fetch(
-    `http://localhost:3000/api/product/${id}`,
+    `/api/product/${id}`,
     {
       next: { revalidate: 60 },
       cache: "force-cache",

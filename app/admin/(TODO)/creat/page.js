@@ -9,7 +9,7 @@ const page = () => {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/Posts`, {
+      const res = await fetch(`/Posts`, {
         method: 'POST',
         body: JSON.stringify({
           title: data

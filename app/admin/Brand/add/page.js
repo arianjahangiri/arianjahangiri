@@ -43,7 +43,7 @@ const AddImage = () => {
       formData.append("imageUrl", image);
 
       // ارسال داده‌ها به API
-      const response = await fetch("http://localhost:3000/api/Brandsection", {
+      const response = await fetch("/api/Brandsection", {
         method: "POST",
         body: formData,
       });

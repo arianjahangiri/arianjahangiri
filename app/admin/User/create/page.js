@@ -49,7 +49,7 @@ const Page = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/User", {
+      const res = await fetch("
         method: "POST",
         body: JSON.stringify({ name, email, phone, status }),
         headers: {

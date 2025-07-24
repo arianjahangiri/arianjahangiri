@@ -28,7 +28,7 @@ const UpdateProduct = () => {
     const fetchImageSlideShow = async () => {
       setLoading(true);
       try {
-        const slidResponse = await fetch(`http://localhost:3000/api/SlideShow/${id}`);
+        const slidResponse = await fetch(`/api/SlideShow/${id}`);
         if (!slidResponse.ok) {
           throw new Error("خطا در دریافت داده‌ها");
         }
@@ -75,7 +75,7 @@ const UpdateProduct = () => {
         formData.append("image", image);
       }
 
-      const response = await fetch(`http://localhost:3000/api/SlideShow/${id}`, {
+      const response = await fetch(`/api/SlideShow/${id}`, {
         method: "PUT",
         body: formData,
       });
