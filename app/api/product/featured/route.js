@@ -1,6 +1,6 @@
+ 
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
- 
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -16,9 +16,11 @@ export async function GET() {
 
     return NextResponse.json(featuredProducts, { status: 200 });
   } catch (error) {
+    console.error("FEATURED ERROR:", error); // این خط را اضافه کن
     return NextResponse.json(
       {
         error: "مشکلی در دریافت محصولات پربازدید رخ داده است",
+        detail: error.message, // این خط را اضافه کن
       },
       { status: 500 }
     );
