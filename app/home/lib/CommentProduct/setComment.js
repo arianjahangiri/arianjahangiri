@@ -1,5 +1,5 @@
 export async function setComment(text, productId, userId, isApproval) {
-  const res = await fetch("/api/comment", {
+           const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/comment`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -5,10 +5,10 @@ import Productdetails from '../../home/Productdetails';
 import Relatedporoduct from '../../home/Relatedporoduct';
 import Commentes from '../../home/commentesProduct/Commentes';
 import AddTOCartButton from '../../home/AddTOCartButton';
-
+ 
 async function getProductData(id) {
   const res = await fetch(
-    `/api/product/${id}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/${id}`,
     {
       next: { revalidate: 60 },
       cache: "force-cache",
