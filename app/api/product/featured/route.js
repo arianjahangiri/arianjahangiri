@@ -1,8 +1,9 @@
  
+import categories from "@/app/modls/categories-menu/categories";
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
 import { NextResponse } from "next/server";
-
+ 
 export async function GET() {
   await connect();
  
