@@ -3,7 +3,7 @@ export async function getFeaturedProducts() {
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/featured`,
     {
       cache: "no-cache",
-
+ 
     }
   );
  

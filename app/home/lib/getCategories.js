@@ -5,7 +5,7 @@ export async function getCategories() {
       cache: "no-cache",
     }
   );
-
+ 
   if (!res.ok) {
     throw new Error("مشکلی در دریافت دسته بندی رخ داده است");
   }
