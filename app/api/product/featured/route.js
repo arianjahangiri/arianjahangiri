@@ -1,4 +1,3 @@
- 
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
  
@@ -9,9 +8,7 @@ export async function GET() {
 
   try {
     const featuredProducts = await product.find({}).populate({
-      path: "category", // نام فیلد در مدل Product
-
-      
+      path: "category",
     })
       .sort({ views: -1 })
       .limit(8)
