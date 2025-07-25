@@ -49,7 +49,7 @@ const Page = () => {
     }
 
     try {
-      const res = await fetch("/api/User", {
+      const res = await fetch("https://arianjahangiri.vercel.appi.vercel.app/api/User", {
         method: "POST",
         body: JSON.stringify({ name, email, phone, status }),
         headers: {

@@ -24,11 +24,11 @@ const ProductSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-  category: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "categories",
-  required: true,
-},
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "categories", // اینجا باید با نام مدل شما یکسان باشد
+      required: true,
+    }, 
     views: { type: Number, default: 0 },
   },
   { timestamps: true }

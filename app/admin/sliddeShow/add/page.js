@@ -47,7 +47,7 @@ const AddImage = () => {
       formData.append("imageUrl", image);
       formData.append("UrlLink", UrlLink);
    
-      const response = await fetch("/api/SlideShow", {
+      const response = await fetch("https://arianjahangiri.vercel.appi.vercel.app/api/SlideShow", {
         method: "POST",
         body: formData,
       });

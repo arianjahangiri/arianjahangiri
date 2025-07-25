@@ -16,6 +16,7 @@ export async function GET(req, { params }) {
     // اطمینان از این که params به درستی دسترسی داده شده
     const { id } = await params;
 
+
     const products = await product.findById(id);
 
     if (!products) {

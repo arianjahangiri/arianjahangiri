@@ -10,7 +10,7 @@ import { FaTrash } from "react-icons/fa";
 
 
 const Page = () => {
-  const API_URL = "/api/comment";
+  const API_URL = "https://arianjahangiri.vercel.app/api/comment";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

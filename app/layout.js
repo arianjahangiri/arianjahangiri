@@ -6,6 +6,7 @@ import "./Style/profile.css";
 import "./Style/style.css";
  
  
+ 
 import Script from "next/script";
 import Footer from "./component/layout/Footer";
 import Header from "./component/layout/Header";
@@ -57,7 +58,6 @@ export default function RootLayout({ children }) {
         <CartProvider>
           <Header />
           {children}
-            
           <Footer />
         </CartProvider>
       </SessionProviderWrapper>

@@ -42,7 +42,7 @@ const Page = () => {
 
     try {  
       // Sending the form data to the server  
-      await fetch("/api/discountCode", {  
+      await fetch("https://arianjahangiri.vercel.app/api/discountCode", {  
         method: "POST",  
         body: JSON.stringify({ status, Translations, discountPercentage, discountcode }),  
         headers: { "Content-Type": "application/json" },  

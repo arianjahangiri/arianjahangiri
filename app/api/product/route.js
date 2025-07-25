@@ -11,7 +11,7 @@ export async function GET(req) {
       model: "categories" // نام مدل مورد نظر
     });  
     
-    return new Response(JSON.stringify(), {   
+    return new Response(JSON.stringify(products), {   
       status: 200,  
       headers: { "Content-Type": "application/json" },  
     });  
