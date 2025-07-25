@@ -24,9 +24,9 @@ const ProductSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-   category: {
+  category: {
   type: mongoose.Schema.Types.ObjectId,
-  ref: "categories",
+  ref: "categories", // دقیقاً همین
   required: true,
 },
     views: { type: Number, default: 0 },
