@@ -1,18 +1,16 @@
  
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
- 
 import { NextResponse } from "next/server";
 
 export async function GET() {
   await connect();
 
   try {
-    const featuredProducts = await product.find({}).populate({
-      path: "category", // نام فیلد در مدل Product
-
-      
-    })
+    const featuredProducts = await product.find({})
+      .populate({
+        path: "category", // فقط همین، نه categories
+      })
       .sort({ views: -1 })
       .limit(8)
       .select("name price imageUrl category views");
@@ -22,6 +20,7 @@ export async function GET() {
     return NextResponse.json(
       {
         error: "مشکلی در دریافت محصولات پربازدید رخ داده است",
+        detail: error.message,
       },
       { status: 500 }
     );
