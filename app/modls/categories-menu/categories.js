@@ -17,5 +17,5 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 // export default mongoose.models.CategoriesMenu || mongoose.model("CategoriesMenu", categorySchema);
-// ...existing code...
-export default mongoose.models.categories || mongoose.model("categories", CategorySchema);
+export default mongoose.models.categories ||
+  mongoose.model("categories", categorySchema);
