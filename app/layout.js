@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/owl.carousel@2.3.4/dist/owl.carousel.min.js"></script>
 
-
+<script src="https://cdn.jsdelivr.net/npm/popper.js/dist/umd/popper.min.js"></script>
 
 
 
