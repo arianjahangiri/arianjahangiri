@@ -18,14 +18,12 @@ export async function GET(req) {
 
   await connect();
   try {
-    console.log("Fetching product11111111111111111111111111111111111111111111 gallery for ProductID:", ProductID);
+   
    
  
     const productGallery = await ProductGallery.find({ ProductID })
    
-    
-      // .lean();
-    console.log("Fetching product gallery for ProductID:", ProductID);
+ 
     if (!productGallery || productGallery.length === 0) {
       console.warn("No product gallery found for ProductID:", ProductID);
     }
