@@ -17,7 +17,7 @@ const Page = () => {
   const fetchDel = async (IdDelete) => {  
     if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;  
     try {  
-      await fetch(`https://arianjahangiri.vercel.app/api/ProductGallery?ProductID=${IdDelete}`, {  
+      await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/ProductGallery?ProductID=${IdDelete}`, {  
         method: "DELETE",  
       });  
       fetchData();  // داده‌ها را دوباره بارگذاری کنید  
