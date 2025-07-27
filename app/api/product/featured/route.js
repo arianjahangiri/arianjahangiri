@@ -8,7 +8,7 @@ export async function GET() {
   await connect();
 
   try {
-    const featuredProducts = await product.find({}) 
+    const featuredProducts = await product.find({}).populate("categories")
       .sort({ views: -1 })
       .limit(8)
       .select("name price imageUrl category views");
