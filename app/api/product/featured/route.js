@@ -9,7 +9,7 @@ export async function GET() {
 
   try {
     const featuredProducts = await product.find({}).populate({
-      path: "categories", // نام فیلد در مدل Product
+      path: "category", // نام فیلد در مدل Product
 
       
     })
