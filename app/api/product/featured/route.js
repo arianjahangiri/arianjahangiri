@@ -8,11 +8,7 @@ export async function GET() {
   await connect();
 
   try {
-    const featuredProducts = await product.find({}).populate({
-      path: "category", // نام فیلد در مدل Product
-
-      
-    })
+    const featuredProducts = await product.find({}).populate({ path: 'category', options: { strictPopulate: false } })
       .sort({ views: -1 })
       .limit(8)
       .select("name price imageUrl category views");
