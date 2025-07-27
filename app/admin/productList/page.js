@@ -13,7 +13,7 @@ const StockListPage = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("https://arianjahangiri.vercel.appi.vercel.appi.vercel.app/api/product");
+      const res = await fetch("http://localhost:3000/api/product");
       if (!res.ok) throw new Error("خطا در دریافت محصولات");
       const json = await res.json();
       setProducts(json);
@@ -40,7 +40,7 @@ const StockListPage = () => {
 
     try {
       // دریافت اطلاعات فعلی محصول برای ساخت FormData کامل
-      const res = await fetch(`https://arianjahangiri.vercel.appi.vercel.appi.vercel.app/api/product/${productId}`);
+      const res = await fetch(`http://localhost:3000/api/product/${productId}`);
       if (!res.ok) throw new Error("خطا در دریافت محصول");
       const product = await res.json();
 
@@ -52,7 +52,7 @@ const StockListPage = () => {
       formData.append("stock", newStock); // فقط این مقدار تغییر کرده
 
       // ارسال FormData کامل
-      const updateRes = await fetch(`https://arianjahangiri.vercel.appi.vercel.appi.vercel.app/api/product/${productId}`, {
+      const updateRes = await fetch(`http://localhost:3000/api/product/${productId}`, {
         method: "PUT",
         body: formData,
       });

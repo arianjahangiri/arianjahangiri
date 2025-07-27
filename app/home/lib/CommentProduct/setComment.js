@@ -1,5 +1,5 @@
 export async function setComment(text, productId, userId, isApproval) {
-  const res = await fetch("https://arianjahangiri.vercel.app/api/comment", {
+  const res = await fetch("http://localhost:3000/api/comment", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -23,7 +23,7 @@ const UpdateProduct = () => {
     const fetchProductData = async () => {
       setLoading(true);
       try {
-        const productResponse = await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/product/${id}` );
+        const productResponse = await fetch(`http://localhost:3000/api/product/${id}` );
         const productData = await productResponse.json();
         setName(productData.name);
         setDescription(productData.description);
@@ -32,7 +32,7 @@ const UpdateProduct = () => {
         setCategory(productData.category);
         setCurrentImage(productData.imageUrl);
 
-        const categoriesResponse = await fetch(" https://arianjahangiri.vercel.appi.vercel.app/api/categories/home-menu");
+        const categoriesResponse = await fetch(" http://localhost:3000/api/categories/home-menu");
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
       } catch (error) {
@@ -96,7 +96,7 @@ const UpdateProduct = () => {
         formData.append("imageUrl", image);
       }
 
-      const response = await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/product/${id}` , {
+      const response = await fetch(`http://localhost:3000/api/product/${id}` , {
         method: "PUT",
         body: formData,
       });

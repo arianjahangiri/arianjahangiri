@@ -18,7 +18,7 @@ const Page = () => {
   const fetchDel = async (id) => {
     if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;
     try {
-        await fetch(`https://arianjahangiri.vercel.app/api/Brandsection/${id}`, {
+        await fetch(`http://localhost:3000/api/Brandsection/${id}`, {
 
         method: "DELETE",
       });

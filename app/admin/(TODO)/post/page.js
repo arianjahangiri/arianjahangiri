@@ -13,7 +13,7 @@ const page = () => {
 
   const fetchdel = async (id) => {
     try {
-      await fetch(`https://arianjahangiri.vercel.appi.vercel.app/Posts/${id}`, {
+      await fetch(`http://localhost:3000/Posts/${id}`, {
         method: "DELETE",
       });
 
@@ -27,7 +27,7 @@ const page = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("https://arianjahangiri.vercel.appi.vercel.app/Posts");
+      const res = await fetch("http://localhost:3000/Posts");
       if (!res.ok) throw new Error("خطا در بارگذاری پست‌ها");
 
       const jsonData = await res.json();
