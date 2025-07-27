@@ -9,16 +9,16 @@ export async function GET() {
 
   try {
     const featuredProducts = await product.find({})
-  .populate({ path: "categories", strictPopulate: false })
-  .sort({ views: -1 })
-  .limit(8)
-  .select("name price imageUrl category views");
+      .populate({ path: "category", strictPopulate: false }) // فعال کردن strictPopulate
+      .sort({ views: -1 })
+      .limit(8)
+      .select("name price imageUrl category views");
 
     return NextResponse.json(featuredProducts, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {
-        error: "مشکلی در دریافت محصولات پربازدید رخ داده است" + error.message,
+        error: "مشکلی در دریافت محصولات پربازدید رخ داده است: " + error.message,
       },
       { status: 500 }
     );
