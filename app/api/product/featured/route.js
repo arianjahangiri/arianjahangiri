@@ -21,7 +21,7 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json(
       {
-        error: "مشکلی در دریافت محصولات پربازدید رخ داده است",
+        error: "مشکلی در دریافت محصولات پربازدید رخ داده است" + error.message,
       },
       { status: 500 }
     );

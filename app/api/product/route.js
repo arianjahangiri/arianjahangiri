@@ -15,7 +15,7 @@ export async function GET(req) {
     });  
   } catch (error) {
     console.error("Error in GET:", error); // خطا را لاگ کنید
-    return new Response(JSON.stringify({ error: error.message }), {  
+    return new Response(JSON.stringify({ error: error.message}), {  
       status: 500,  
       headers: { "Content-Type": "application/json" },  
     });  
