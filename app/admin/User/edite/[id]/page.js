@@ -25,7 +25,7 @@ const EditPostPage = () => {
     // Function to fetch user data based on the ID
     const fetchData = async () => {
       try {
-        const res = await fetch(`https://arianjahangiri.vercel.app/api/User/${id}`);
+        const res = await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/User/${id}`);
         if (!res.ok) throw new Error("خطا در بارگذاری پست‌ها");
 
         const jsonData = await res.json();
@@ -75,7 +75,7 @@ const EditPostPage = () => {
     }
 
     try {
-      const res = await fetch(`https://arianjahangiri.vercel.app/api/User/${id}`, {
+      const res = await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/User/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, status }),
