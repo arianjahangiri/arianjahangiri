@@ -8,10 +8,11 @@ export async function GET() {
   await connect();
 
   try {
-    const featuredProducts = await product.find({}).populate("categories")
-      .sort({ views: -1 })
-      .limit(8)
-      .select("name price imageUrl category views");
+    const featuredProducts = await product.find({})
+  .populate({ path: "categories", strictPopulate: false })
+  .sort({ views: -1 })
+  .limit(8)
+  .select("name price imageUrl category views");
 
     return NextResponse.json(featuredProducts, { status: 200 });
   } catch (error) {
