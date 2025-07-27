@@ -17,7 +17,7 @@ export async function GET(req) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching slideshows:", error);
+    console.error("خطا در دریافت اسلایدشوها:", error);
     return new Response(
       JSON.stringify({ error: "خطا در دریافت اسلایدشوها" }),
       {
@@ -72,13 +72,13 @@ export async function POST(request) {
 
     const product = await owlcarousel.create({
       name,
-      UrlLink, // ✅ اضافه شده به سند
+      UrlLink,
       imageUrl: `/uploads/${file.name}`,
     });
 
     return new Response(JSON.stringify(product), { status: 200 });
   } catch (error) {
-    console.error("Error uploading slideshow:", error);
+    console.error("خطا در آپلود اسلایدشو:", error);
     return new Response(JSON.stringify({ message: error.message }), {
       status: 500,
     });
