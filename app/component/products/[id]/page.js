@@ -45,12 +45,7 @@ const page = async ({ params }) => {
                   {product.price.toLocaleString()} <span className="small">تومان</span>
                 </p>
               </section>
-              <section className="d-flex justify-content-between align-items-center">
-                <p className="text-muted">تخفیف کالا</p>
-                <p className="text-danger fw-bolder">
-                  260,000 <span className="small">تومان</span>
-                </p>
-              </section>
+             
               <section className="border-bottom mb-3"></section>
               <section className="d-flex justify-content-end align-items-center">
                 <p className="fw-bolder">
