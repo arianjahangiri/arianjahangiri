@@ -43,7 +43,7 @@ const AddImage = () => {
       formData.append("imageUrl", image);
 
       // ارسال داده‌ها به API
-      const response = await fetch("https://arianjahangiri.vercel.appi.vercel.app/api/AdsSection", {
+      const response = await fetch("https://arianjahangiri.vercel.appion", {
         method: "POST",
         body: formData,
       });

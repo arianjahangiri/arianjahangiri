@@ -26,7 +26,7 @@ const UpdateAds = () => {
     const fetchImageAds = async () => {
       setLoading(true);
       try {
-        const AdsResponse = await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/Brandsection/${id}`);
+        const AdsResponse = await fetch(`https://arianjahangiri.vercel.app/api/Brandsection/${id}`);
         if (!AdsResponse.ok) {
           throw new Error("خطا در دریافت داده‌ها");
         }
@@ -74,7 +74,7 @@ const UpdateAds = () => {
         formData.append("image", image);
       }
 
-      const response = await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/Brandsection/${id}`, {
+      const response = await fetch(`https://arianjahangiri.vercel.app/api/Brandsection/${id}`, {
         method: "PUT",
         body: formData,
       });

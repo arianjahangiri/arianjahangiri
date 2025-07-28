@@ -11,7 +11,7 @@ import Link from "next/link";
 
 
 const Page = () => {
-  const API_URL = "https://arianjahangiri.vercel.appi.vercel.app/api/categories/home-menu";
+  const API_URL = "https://arianjahangiri.vercel.app/api/categories/home-menu";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

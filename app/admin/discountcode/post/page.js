@@ -16,7 +16,7 @@ const DiscountPage = () => {
   // Function to delete a discount code
   const deleteDiscount = async (id) => {
     try {
-      await fetch(`https://arianjahangiri.vercel.appi.vercel.app/api/discountCode/${id}`, {
+      await fetch(`https://arianjahangiri.vercel.app/api/discountCode/${id}`, {
         method: "DELETE",
       });
       setDiscounts((prevDiscounts) => prevDiscounts.filter((discount) => discount._id !== id));
@@ -29,7 +29,7 @@ const DiscountPage = () => {
   const loadDiscounts = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://arianjahangiri.vercel.appi.vercel.app/api/discountCode");
+      const response = await fetch("https://arianjahangiri.vercel.app/api/discountCode");
       if (!response.ok) throw new Error("Error loading discount codes");
       const data = await response.json();
       setDiscounts(data);
