@@ -17,11 +17,7 @@ export async function GET(req, { params }) {
     const { id } = await params;
 
 
-    const products = await product.findById(id).populate({
-      path: "categories", // نام فیلد در مدل Product
-
-      
-    });
+    const products = await product.findById(id) .populate({ path: "category", strictPopulate: false }) ;  
     ;
 
     if (!products) {
