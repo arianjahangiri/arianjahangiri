@@ -1,77 +1,74 @@
-
 "use client"
-import Image from 'next/image'; // ✅ درست
+import Image from 'next/image';
 import Link from "next/link";
 import React from "react";
 
 const ProductCard = ({ product }) => {
-
-
-const discountedPrice = product.discount > 0 ? product.price - (product.price * (product.discount / 100)) : product.price;
-
-
+  const discountedPrice = product.discount > 0
+    ? product.price - (product.price * (product.discount / 100))
+    : product.price;
 
   return (
-    <section className="item">
-      <section className="lazyload-item-wrapper">
-        <section className="product">
-          <section className="product-add-to-cart">
-            <a
-              href="#"
-              data-bs-toggle="tooltip"
-              data-bs-placement="left"
-              title="افزودن به سبد خرید"
-            >
-              <i className="fa fa-cart-plus"></i>
-            </a>
-          </section>
-          <section className="product-add-to-favorite">
-            <a
-              href="#"
-              data-bs-toggle="tooltip"
-              data-bs-placement="left"
-              title="افزودن به علاقه مندی"
-            >
-              <i className="fa fa-heart"></i>
-            </a>
-          </section>
-         
-            <section className="product-image">
-              <Link  className="product-link" href={`/component/products/${product._id}`}>
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                width={300}
-                height={300}
-              />
-
-
-              
-              </Link>
-            </section>
-            <section className="product-colors"></section>
-            <section className="product-name">
-              <h3>{product.name}</h3>
-            </section>
-            <section className="product-price-wrapper">
-              <section className={product.discount >0 ?"line-through decoration-red-500 " : ""}>{product.price}</section>
-  
-
-       {product.discount > 0 && (
-        <div>
-          <section className="product-price">{discountedPrice}</section>
-
-          <span className="bg-red-100 text-red-600 text-sm font-bold px-2 py-1 rounded-full">
-            {product.discount}٪ تخفیف
-          </span>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+      <div className="relative">
+        {/* آیکن‌ها */}
+        <div className="absolute top-2 left-2 flex flex-col gap-2 z-10">
+          <button
+            title="افزودن به سبد خرید"
+            className="bg-white p-2 rounded-full shadow hover:bg-gray-100"
+          >
+            <i className="fa fa-cart-plus text-gray-600"></i>
+          </button>
+          <button
+            title="افزودن به علاقه‌مندی"
+            className="bg-white p-2 rounded-full shadow hover:bg-gray-100"
+          >
+            <i className="fa fa-heart text-red-500"></i>
+          </button>
         </div>
-)}
 
-            </section>
-          
-        </section>
-      </section>
-    </section>
+        {/* تصویر محصول */}
+        <Link href={`/component/products/${product._id}`} className="block">
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            width={300}
+            height={300}
+            className="w-full h-64 object-contain p-4"
+          />
+        </Link>
+      </div>
+
+      {/* اطلاعات محصول */}
+      <div className="p-4 text-center">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          {product.name}
+        </h3>
+
+        <div className="flex justify-center items-center gap-2">
+          {/* قیمت اصلی (خط خورده اگر تخفیف داره) */}
+          <span className={`text-sm ${product.discount > 0 ? "line-through text-gray-400" : "text-gray-800 font-bold"}`}>
+            {product.price.toLocaleString()} تومان
+          </span>
+
+          {/* قیمت تخفیفی */}
+          {product.discount > 0 && (
+            <span className="text-green-600 font-bold text-md">
+              {discountedPrice.toLocaleString()} تومان
+            </span>
+          )}
+        </div>
+
+        {/* درصد تخفیف */}
+        {product.discount > 0 && (
+          <div className="mt-2">
+            <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">
+              {product.discount}% تخفیف
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -93,7 +93,7 @@ const Footer = () => {
             <h4 className="text-gray-800 mb-3 text-base font-bold border-b pb-2 border-gray-200">
               شبکه‌های اجتماعی
             </h4>
-            <div className="flex items-center gap-4 text-2xl">
+            <div className="flex items-center gap-8 text-2xl">
               {socialIcons.map((icon, idx) => (
                 <a
                   key={idx}

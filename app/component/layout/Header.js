@@ -74,7 +74,7 @@ const Header = () => {
               className="cursor-pointer"
             >
               <Image 
-                src="/images/logo/8.png" 
+                src="/public/images/brand/ChatGPT Image Jul 28, 2025, 11_30_02 PM.png" 
                 alt="Logo" 
                 width={80} 
                 height={50} 
