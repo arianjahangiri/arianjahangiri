@@ -8,7 +8,7 @@ export async function GET(req) {
   await connect();  
   try {  
     const products = await product.find({}).populate({
-      path: "category", // نام فیلد در مدل Product
+      path: "categories", // نام فیلد در مدل Product
 
       
     })
