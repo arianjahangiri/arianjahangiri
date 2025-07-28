@@ -7,7 +7,7 @@ import React from "react";
 const ProductCard = ({ product }) => {
 
 
-const discountedPrice = product.discount > 0 ? product.price - (product.price * (product.discount / 100)) : price;
+const discountedPrice = product.discount > 0 ? product.price - (product.price * (product.discount / 100)) : product.price;
 
 
 
