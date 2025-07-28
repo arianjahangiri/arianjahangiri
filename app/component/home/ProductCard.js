@@ -32,7 +32,7 @@ const ProductCard = ({ product }) => {
         {/* تصویر محصول */}
         <Link href={`/component/products/${product._id}`} className="block">
           <Image
-            src={product.imageUrl}
+            src={`${product.imageUrl}`}
             alt={product.name}
             width={300}
             height={300}
