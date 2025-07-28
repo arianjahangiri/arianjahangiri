@@ -4,7 +4,7 @@ import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
 import categories from "@/app/modls/categories-menu/categories";
  
- 
+ import { put } from "@vercel/blob";
 export async function GET(req) {  
   await connect();  
   try {  
@@ -29,19 +29,19 @@ export async function POST(request) {
     const data = await request.formData();
     const file = data.get("image");
 
-    if (!file) {
-      return new Response(JSON.stringify({ message: "آپلود تصویر الزامی می‌باشد" }), { status: 400 });
+    if (!file || typeof file === "string") {
+      return new Response(JSON.stringify({ message: "آپلود تصویر الزامی است" }), { status: 400 });
     }
 
     const name = data.get("name");
-    const discount = data.get("discount");
+    const discount = parseFloat(data.get("discount"));
     const description = data.get("description");
     const price = parseFloat(data.get("price"));
     const stock = parseInt(data.get("stock"));
     const category = data.get("category");
 
-    if (!name || !description || isNaN(price) || isNaN(stock)  || isNaN(discount)  || !category) {
-      return new Response(JSON.stringify({ message: "تمامی فیلدها الزامی می‌باشند" }), { status: 400 });
+    if (!name || !description || isNaN(price) || isNaN(stock) || isNaN(discount) || !category) {
+      return new Response(JSON.stringify({ message: "تمامی فیلدها الزامی هستند" }), { status: 400 });
     }
 
     if (name.length < 3 || name.length > 30) {
@@ -56,16 +56,17 @@ export async function POST(request) {
       return new Response(JSON.stringify({ message: "قیمت و موجودی باید بیش از ۰ باشد" }), { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // تبدیل فایل به buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const uploadDir = join(process.cwd(), "/public/uploads");
-    const filePath = join(uploadDir, file.name);
-
-    await writeFile(filePath, buffer);
+    // آپلود به Vercel Blob
+    const blob = await put(`products/${Date.now()}-${file.name}`, buffer, {
+      access: "public",
+      contentType: file.type,
+    });
 
     await connect();
- 
+
     const newProduct = await product.create({
       name,
       description,
@@ -73,12 +74,16 @@ export async function POST(request) {
       stock,
       discount,
       category,
-      imageUrl: `/uploads/${file.name}`,
+      imageUrl: blob.url, // آدرس تصویر در Vercel Blob
     });
 
-    return new Response(JSON.stringify(newProduct), { status: 201 });
+    return new Response(JSON.stringify(newProduct), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
 
   } catch (error) {
+    console.error("Upload error:", error);
     return new Response(JSON.stringify({ message: error.message }), { status: 500 });
   }
 }
