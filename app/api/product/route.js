@@ -2,15 +2,15 @@ import { join } from "path";
 import { writeFile } from "fs/promises";
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
-import categories from "@/app/modls/categories-menu/categories";
+ 
   
 export async function GET(req) {  
   await connect();  
   try {  
-    const products = await product.find({}).populate({
+    const products = await product.find({})..populate({
       path: "category", // نام فیلد در مدل Product
       model: "categories" // نام مدل مورد نظر
-    })
+    });  
     return new Response(JSON.stringify(products), {   
       status: 200,  
       headers: { "Content-Type": "application/json" },  

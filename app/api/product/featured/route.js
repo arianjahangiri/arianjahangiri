@@ -3,16 +3,16 @@ import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
  
 import { NextResponse } from "next/server";
-import categories from "@/app/modls/categories-menu/categories";
+ 
 export async function GET() {
   await connect();
 
   try {
-    const featuredProducts = await product.find({})
-.populate({
+    const featuredProducts = await product.find({}).populate({
       path: "category", // نام فیلد در مدل Product
-      model: "categories" // نام مدل مورد نظر
-    }) // فعال کردن strictPopulate
+
+      
+    })
       .sort({ views: -1 })
       .limit(8)
       .select("name price imageUrl category views");
