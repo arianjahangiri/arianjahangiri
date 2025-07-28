@@ -1,8 +1,8 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { getFeaturedProducts } from "@/app/home/lib/getFeaturedProducts";
- 
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +14,7 @@ const FeaturedProducts = () => {
       try {
         const data = await getFeaturedProducts();
         if (!Array.isArray(data)) {
-          throw new Error("داده های دریافتی معتبر نمیباشند");
+          throw new Error("داده‌های دریافتی معتبر نمی‌باشند");
         }
         setProducts(data);
       } catch (error) {
@@ -28,25 +28,25 @@ const FeaturedProducts = () => {
   }, []);
 
   useEffect(() => {
-    if (products.length > 0) {
+    if (products.length > 0 && typeof window !== "undefined") {
       $(".feature-owl-carousel").owlCarousel({
         items: 4,
         loop: true,
         autoplay: true,
         rtl: true,
+        margin: 16,
         responsive: {
           0: { items: 1 },
           576: { items: 2 },
           768: { items: 3 },
           992: { items: 4 },
-          1200: { items: 5 },
         },
       });
     }
   }, [products]);
 
   if (loading) return <div>در حال بارگذاری...</div>;
-  if (error) return <div>خطا در بارگذاری داده ها</div>;
+  if (error) return <div>خطا در بارگذاری داده‌ها</div>;
 
   return (
     <section className="mb-3">
@@ -64,14 +64,14 @@ const FeaturedProducts = () => {
                   </section>
                 </section>
               </section>
+
               <section className="lazyload-wrapper">
-                <section className="lazyload light-owl-nav feature-owl-carousel owl-carousel owl-theme">
-                  {products.map((product) => {
-                    return (
-                  
- 
-                    <ProductCard loading={loading?true:false} key={product._id} product={product} />);
-                  })}
+                <section className="lazyload light-owl-nav feature-owl-carousel owl-carousel owl-theme py-4 px-1">
+                  {products.map((product) => (
+                    <div className="item px-2" key={product._id}>
+                      <ProductCard product={product} />
+                    </div>
+                  ))}
                 </section>
               </section>
             </section>
