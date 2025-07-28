@@ -1,7 +1,7 @@
 export async function setslideshowImage({ formData, id }) {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/SlideShow/${id}`,
-      {
+      { next: { revalidate: 200 },
         method: "PUT",
         body: formData,
         cache: "force-cache",

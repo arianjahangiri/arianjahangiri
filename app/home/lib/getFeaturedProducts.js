@@ -1,7 +1,7 @@
 export async function getFeaturedProducts() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/featured`,
-    {
+    { next: { revalidate: 200 },
       cache: "force-cache",
 
     }
