@@ -251,7 +251,7 @@ const Header = () => {
 
       {/* منوی دسکتاپ */}
       <nav className="hidden lg:block border-t bg-gradient-to-r from-dark-75 to-gray-60 border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex gap-12">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex gap-10">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} width={80} height={20} baseColor="#E5E7EB" highlightColor="#F3F4F6" />
@@ -372,7 +372,7 @@ const Header = () => {
                     <Link href="/auth/login">
                       <motion.button 
                         whileTap={{ scale: 0.98 }}
-                        className="w-full py-2.5 rounded-lg transition-colors font-medium border border-blue-500 text-blue-500 hover:bg-blue-50"
+                        className="w-full py-2.5 rounded-lg transition-colors font-medium border border-blue-500 text-blue-500 !text-center hover:bg-blue-50"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         ورود به حساب
@@ -381,10 +381,10 @@ const Header = () => {
                     <Link href="/auth/register">
                       <motion.button 
                         whileTap={{ scale: 0.98 }}
-                        className="w-full py-2.5 rounded-lg text-white transition-colors font-medium shadow-sm bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                        className="w-full py-2.5 rounded-lg text-white transition-colors font-medium shadow-sm bg-gradient-to-r  !text-center from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        ثبت‌نام جدید
+                        ثبت‌ نام جدید
                       </motion.button>
                     </Link>
                   </div>

@@ -21,7 +21,6 @@ const links = [
 const socialIcons = [
   { name: "instagram", color: "text-pink-500", hover: "hover:text-pink-600" },
   { name: "telegram", color: "text-blue-400", hover: "hover:text-blue-500" },
-  { name: "twitter", color: "text-sky-500", hover: "hover:text-sky-600" },
   { name: "whatsapp", color: "text-green-500", hover: "hover:text-green-600" },
 ];
 
