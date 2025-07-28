@@ -54,7 +54,7 @@ const FeaturedProducts = () => {
         <section className="row">
           <section className="col">
             <section className="content-wrapper bg-white p-3 rounded-2">
-              <section className="content-header">
+              <section className="content-header mb-3">
                 <section className="d-flex justify-content-between align-items-center">
                   <h2 className="content-header-title">
                     <span>پربازدیدترین کالاها</span>
@@ -65,10 +65,10 @@ const FeaturedProducts = () => {
                 </section>
               </section>
 
-              <section className="lazyload-wrapper">
+              <section className="lazyload-wrapper rounded-xl shadow-md bg-white p-4">
                 <section className="lazyload light-owl-nav feature-owl-carousel owl-carousel owl-theme py-4 px-1">
                   {products.map((product) => (
-                    <div className="item px-2" key={product._id}>
+                    <div className="item px-2 py-3" key={product._id}>
                       <ProductCard product={product} />
                     </div>
                   ))}

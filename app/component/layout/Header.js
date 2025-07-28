@@ -76,8 +76,8 @@ const Header = () => {
               <Image 
                 src="/images/brand/ChatGPT Image Jul 28, 2025, 11_30_02 PM.png" 
                 alt="Logo" 
-                width={80} 
-                height={50} 
+                width={108} 
+                height={101} 
                 priority 
                 className="hover:opacity-90 transition-opacity"
               />
