@@ -7,7 +7,7 @@ import categories from "@/app/modls/categories-menu/categories";
 export async function GET(req) {  
   await connect();  
   try {  
-    const products = await product.find({}) ;  
+    const products = await product.find({}).populate("categories");  
     
     return new Response(JSON.stringify(products), {   
       status: 200,  

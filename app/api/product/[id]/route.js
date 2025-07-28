@@ -17,7 +17,8 @@ export async function GET(req, { params }) {
     const { id } = await params;
 
 
-    const products = await product.findById(id);
+    const products = await product.findById(id).populate("categories");  
+    ;
 
     if (!products) {
       return new Response(JSON.stringify({ error: "محصول پیدا نشد!" }), {
