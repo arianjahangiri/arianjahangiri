@@ -7,7 +7,10 @@ import connect from "@/app/utils/db";
 export async function GET(req) {  
   await connect();  
   try {  
-    const products = await product.find({}) .populate({ path: "category", strictPopulate: false })
+    const products = await product.find({}).populate({
+      path: "category", // نام فیلد در مدل Product
+      model: "categories" // نام مدل مورد نظر
+    })
     return new Response(JSON.stringify(products), {   
       status: 200,  
       headers: { "Content-Type": "application/json" },  

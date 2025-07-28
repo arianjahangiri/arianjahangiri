@@ -17,7 +17,7 @@ export async function GET(req, { params }) {
     const { id } = await params;
 
 
-    const products = await product.findById(id) .populate({ path: "category", strictPopulate: false }) ;  
+    const products = await product.findById(id)  ;  
     ;
 
     if (!products) {

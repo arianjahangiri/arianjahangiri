@@ -9,7 +9,10 @@ export async function GET() {
 
   try {
     const featuredProducts = await product.find({})
-      .populate({ path: "category", strictPopulate: false }) // فعال کردن strictPopulate
+.populate({
+      path: "category", // نام فیلد در مدل Product
+      model: "categories" // نام مدل مورد نظر
+    }) // فعال کردن strictPopulate
       .sort({ views: -1 })
       .limit(8)
       .select("name price imageUrl category views");
