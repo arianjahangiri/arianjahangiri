@@ -64,7 +64,7 @@ const Header = () => {
   return (
     <header className="w-full shadow-sm z-50 sticky top-0 border-b bg-white border-gray-100">
       {/* هدر اصلی */}
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+      <div className="max-w-7xl mx-auto h-[109px] flex items-center justify-between px-4 py-3">
         {/* لوگو و منوی همبرگری */}
         <div className="flex items-center gap-4">
           <Link href="/">
