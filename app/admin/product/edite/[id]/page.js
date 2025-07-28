@@ -10,6 +10,7 @@ const UpdateProduct = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [currentImage, setCurrentImage] = useState("");
+  const [discount, setdiscount] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
@@ -90,6 +91,7 @@ const UpdateProduct = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
+      formData.append("discount", discount);
       formData.append("stock", stock);
       formData.append("category", category);
       if (image) {
@@ -150,7 +152,15 @@ const UpdateProduct = () => {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Form.Group>
-
+ <Form.Group className="mb-3">
+                <Form.Label>درصد تخفیف</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="0"
+                  value={discount}
+                  onChange={(e) => setdiscount(e.target.value)}
+                />
+              </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>تصویر</Form.Label>
                 <Form.Control

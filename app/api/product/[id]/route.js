@@ -50,11 +50,12 @@ export async function PUT(request, { params }) {
     const description = formData.get("description");
     const price = Number(formData.get("price"));
     const stock = Number(formData.get("stock"));
+    const discount = Number(formData.get("discount"));
     const category = formData.get("category");
     const file = formData.get("imageUrl");
 
     // Basic validations
-    if (!name || !description || isNaN(price) || isNaN(stock) || !category) {
+    if (!name || !description || isNaN(price) || isNaN(stock)|| isNaN(discount) || !category) {
       return NextResponse.json(
         { success: false, message: "تمامی فیلدها الزامی می‌باشند" },
         { status: 400 }
@@ -111,7 +112,7 @@ export async function PUT(request, { params }) {
 
     const updatedProduct = await product.findByIdAndUpdate(
       id,
-      { name: name.trim(), description: description.trim(), price, stock, category, imageUrl },
+      { name: name.trim(), description: description.trim(), price, stock,discount, category, imageUrl },
       { new: true }
     );
 

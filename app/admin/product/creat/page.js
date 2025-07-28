@@ -8,6 +8,7 @@ const AddCategory = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [discount, setdiscount] = useState(null);
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
@@ -64,6 +65,7 @@ const AddCategory = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("image", image);
+      formData.append("discount", discount);
       formData.append("price", price);
       formData.append("stock", stock);
       formData.append("category", category);
@@ -132,6 +134,14 @@ const AddCategory = () => {
                   placeholder="30000"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                />
+              </Form.Group>    <Form.Group className="mb-3">
+                <Form.Label>درصد تخفیف</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="0"
+                  value={discount}
+                  onChange={(e) => setdiscount(e.target.value)}
                 />
               </Form.Group>
 

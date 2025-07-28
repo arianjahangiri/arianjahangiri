@@ -86,6 +86,7 @@ const Page = () => {
                   <td className="p-3">{product.name}</td>
                   <td className="p-3">{product.description}</td>
                   <td className="p-3 text-center">{product.stock}</td>
+                  <td className="p-3 text-center">{product.discount}</td>
                   <td className="p-3 flex justify-center">
                     <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded-md" />
                   </td>

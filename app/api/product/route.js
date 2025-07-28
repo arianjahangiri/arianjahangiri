@@ -31,12 +31,13 @@ export async function POST(request) {
     }
 
     const name = data.get("name");
+    const discount = data.get("discount");
     const description = data.get("description");
     const price = parseFloat(data.get("price"));
     const stock = parseInt(data.get("stock"));
     const category = data.get("category");
 
-    if (!name || !description || isNaN(price) || isNaN(stock) || !category) {
+    if (!name || !description || isNaN(price) || isNaN(stock)  || isNaN(discount)  || !category) {
       return new Response(JSON.stringify({ message: "تمامی فیلدها الزامی می‌باشند" }), { status: 400 });
     }
 
@@ -67,6 +68,7 @@ export async function POST(request) {
       description,
       price,
       stock,
+      discount,
       category,
       imageUrl: `/uploads/${file.name}`,
     });
