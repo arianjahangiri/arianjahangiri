@@ -62,7 +62,7 @@ export async function POST(request) {
     await writeFile(filePath, buffer);
 
     await connect();
-
+ 
     const newProduct = await product.create({
       name,
       description,
