@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
       <link rel="stylesheet" href="/plugins/owlcarousel/assets/owl.carousel.min.css"/>
       <link rel="stylesheet" href="/plugins/owlcarousel/assets/owl.theme.default.min.css"/>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+   
 <script src="https://cdn.jsdelivr.net/npm/owl.carousel@2.3.4/dist/owl.carousel.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/popper.js/dist/umd/popper.min.js"></script>
@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
 <link rel="stylesheet" href="/fontawesome/css/all.min.css"/>
 
  
-    <Script src="/js/jQuery-3.5.1.min.js" strategy="beforeInteractive"/>
+    <Script src="../public/js/jquery-3.5.1.min.js" strategy="beforeInteractive"/>
     <Script src="/js/popper.js" strategy="beforeInteractive"/>  
       </head>
       <body
