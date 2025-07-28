@@ -31,14 +31,11 @@ const ProductCard = ({ product }) => {
 
         {/* تصویر محصول */}
         <Link href={`/component/products/${product._id}`} className="block">
-          <Image
-            src={`${product.imageUrl}`}
-            alt={product.name}
-            width={300}
-            height={300}
-            className="w-full h-[250px] object-contain p-4"
-          />
-        </Link>
+     <img
+  src={product.imageUrl}
+  alt={product.name}
+  className="w-full h-[250px] object-contain p-4"
+/>
       </div>
 
       {/* اطلاعات محصول */}
