@@ -59,7 +59,7 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = join(process.cwd(), "public/uploads");
+    const uploadDir = join(process.cwd(), "/public/uploads");
     const filePath = join(uploadDir, file.name);
 
     await writeFile(filePath, buffer);
