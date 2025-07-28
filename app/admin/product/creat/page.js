@@ -17,7 +17,7 @@ const AddCategory = () => {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/categories/home-menu")
+    fetch("https://arianjahangiri.vercel.app/api/categories/home-menu")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -68,7 +68,7 @@ const AddCategory = () => {
       formData.append("stock", stock);
       formData.append("category", category);
 
-      const response = await fetch("http://localhost:3000/api/product", {
+      const response = await fetch("https://arianjahangiri.vercel.app/api/product", {
         method: "POST",
         body: formData,
       });

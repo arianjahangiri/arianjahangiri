@@ -34,7 +34,7 @@ const Page = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/categories/home-menu", {
+      const res = await fetch("https://arianjahangiri.vercel.appi.vercel.app/api/categories/home-menu", {
         method: "POST",
       body: JSON.stringify({
   title,
