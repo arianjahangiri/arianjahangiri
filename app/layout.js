@@ -48,7 +48,6 @@ export default function RootLayout({ children }) {
 <link rel="stylesheet" href="/fontawesome/css/all.min.css"/>
 
  
-    <Script src="../public/js/jquery-3.5.1.min.js" strategy="beforeInteractive"/>
     <Script src="/js/popper.js" strategy="beforeInteractive"/>  
       </head>
       <body
