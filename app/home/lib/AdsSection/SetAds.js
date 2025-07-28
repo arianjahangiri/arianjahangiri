@@ -2,6 +2,7 @@ export async function setAdsImage({ formData, id }) {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/AdsSection/${id}`,
       { 
+        cache: "force-cache",
         method: "PUT",
         body: formData,
       }

@@ -2,7 +2,7 @@ export async function getAdsImage() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/AdsSection`,
       { 
-        // cache: "force-cache",
+   cache: "force-cache",
       }
     );
   

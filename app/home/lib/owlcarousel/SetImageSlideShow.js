@@ -4,6 +4,7 @@ export async function setslideshowImage({ formData, id }) {
       {
         method: "PUT",
         body: formData,
+        cache: "force-cache",
       }
     );
 

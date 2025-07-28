@@ -2,7 +2,7 @@ export async function getComment(id) {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/comment/${id}`,
       { 
-        // cache: "force-cache",
+   cache: "force-cache",
       }
     );
   

@@ -2,7 +2,7 @@ export async function getBrandImage() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Brandsection`,
       { 
-        // cache: "force-cache",
+       cache: "force-cache",
       }
     );
   

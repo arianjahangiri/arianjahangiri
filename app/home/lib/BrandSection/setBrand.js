@@ -2,6 +2,7 @@ export async function setBrandImage({ formData, id }) {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Brandsection/${id}`,
       { 
+        cache: "force-cache",
         method: "PUT",
         body: formData,
       }
