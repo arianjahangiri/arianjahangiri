@@ -2,8 +2,9 @@ import { join } from "path";
 import { writeFile } from "fs/promises";
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
+import categories from "@/app/modls/categories-menu/categories";
  
-  
+ 
 export async function GET(req) {  
   await connect();  
   try {  
