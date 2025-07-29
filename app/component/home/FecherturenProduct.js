@@ -49,7 +49,7 @@ const FeaturedProducts = () => {
   if (error) return <div>خطا در بارگذاری داده‌ها</div>;
 
   return (
-    <section className="mb-3">
+    <section className="mt-16 mb-9">
       <section className="container-xxl">
         <section className="row">
           <section className="col">

@@ -5,6 +5,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import { NextResponse } from "next/server";
 import Brand from "@/app/modls/Brand/Brand";
+import { put } from "@vercel/blob";
  
  
  
@@ -38,16 +39,16 @@ export async function POST(request) {
     const name = data.get("name");
     const UrlLink = data.get("UrlLink");
 
-    if (!file) {
+    if (!file || typeof file === "string") {
       return NextResponse.json({
         success: false,
         message: "آپلود تصویر الزامی می‌باشد",
-      });
+      }, { status: 400 });
     }
 
     if (!name || typeof name !== "string" || name.trim() === "") {
       return new Response(
-        JSON.stringify({ message: "نام محصول الزامی می‌باشد" }),
+        JSON.stringify({ message: "نام برند الزامی می‌باشد" }),
         { status: 400 }
       );
     }
@@ -59,39 +60,33 @@ export async function POST(request) {
       );
     }
 
-    // اگر UrlLink موجود نیست، از یک مقدار پیش‌فرض استفاده کنید
     const validUrlLink = UrlLink ? UrlLink : null;
 
-    // تبدیل فایل به buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // تبدیل فایل به Buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    // مسیر ذخیره‌سازی فایل
-    const uploadDir = join(process.cwd(), "public/uploads");
-
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    // مسیر ذخیره‌سازی فایل + نام فایل
-    const filePath = join(uploadDir, file.name);
-    
-    // ذخیره فایل در مسیر مشخص شده
-    await writeFile(filePath, buffer);
-
-    // اتصال به دیتابیس
-    await connect();
-
-    // ذخیره در دیتابیس
-    const Brandes = await Brand.create({
-      name,
-      UrlLink: validUrlLink, // ذخیره UrlLink فقط اگر موجود باشد
-      imageUrl: `/uploads/${file.name}`, // مسیر فایل ذخیره‌شده
+    // آپلود تصویر روی Vercel Blob
+    const blob = await put(`brands/${Date.now()}-${file.name}`, buffer, {
+      access: "public",
+      contentType: file.type,
     });
 
-    return new Response(JSON.stringify(Brandes), { status: 200 });
+    await connect();
+
+    // ذخیره اطلاعات برند در دیتابیس
+    const newBrand = await Brand.create({
+      name,
+      UrlLink: validUrlLink,
+      imageUrl: blob.url, // لینک CDN Vercel Blob
+    });
+
+    return new Response(JSON.stringify(newBrand), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+
   } catch (error) {
-    console.error("Error uploading slideshow:", error);
+    console.error("Error uploading brand:", error);
     return new Response(JSON.stringify({ message: error.message }), {
       status: 500,
     });

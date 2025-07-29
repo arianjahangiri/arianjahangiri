@@ -4,23 +4,26 @@ import { join } from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import { NextResponse } from "next/server";
-import Ads from "@/app/modls/AdesSection/Ads";
+ 
+import CategorySlider from "@/app/modls/CategorySlider/CategorySlider";
 import { put } from "@vercel/blob";
-
+ 
+ 
+ 
 // GET: گرفتن تمام اسلایدشوها
 export async function GET(req) {
   await connect();
-
+ 
   try {
-    const Adses = await Ads.find({});
-    return new Response(JSON.stringify(Adses), {
+    const categoryslider = await CategorySlider.find({});
+    return new Response(JSON.stringify(categoryslider), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching slideshows:", error);
+    console.error("Error fetching categoryslider:", error);
     return new Response(
-      JSON.stringify({ error: "خطا در دریافت اسلایدشوها" }),
+      JSON.stringify({ error: "خطا در دریافت  اسلایدر های دسته بندی " }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -38,54 +41,40 @@ export async function POST(request) {
     const UrlLink = data.get("UrlLink");
 
     if (!file || typeof file === "string") {
-      return NextResponse.json({
-        success: false,
-        message: "آپلود تصویر الزامی می‌باشد",
-      }, { status: 400 });
+      return new Response(JSON.stringify({ message: "آپلود تصویر الزامی است" }), { status: 400 });
     }
 
     if (!name || typeof name !== "string" || name.trim() === "") {
-      return new Response(
-        JSON.stringify({ message: "نام محصول الزامی می‌باشد" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ message: "نام محصول الزامی است" }), { status: 400 });
     }
 
     if (name.length < 3 || name.length > 30) {
-      return new Response(
-        JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ کاراکتر باشد" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ کاراکتر باشد" }), { status: 400 });
     }
 
-    const validUrlLink = UrlLink ? UrlLink : null;
-
-    // تبدیل فایل به buffer برای آپلود
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // آپلود به Vercel Blob
-    const blob = await put(`ads/${Date.now()}-${file.name}`, buffer, {
+    // آپلود فایل روی Vercel Blob
+    const blob = await put(`slider/${Date.now()}-${file.name}`, buffer, {
       access: "public",
       contentType: file.type,
     });
 
     await connect();
 
-    const newAd = await Ads.create({
+    const newSlider = await CategorySlider.create({
       name,
-      UrlLink: validUrlLink,
-      imageUrl: blob.url, // لینک CDN تصویر
+      UrlLink: UrlLink || null,
+      imageUrl: blob.url, // لینک آنلاین تصویر
     });
 
-    return new Response(JSON.stringify(newAd), {
+    return new Response(JSON.stringify(newSlider), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
 
   } catch (error) {
-    console.error("Error uploading ad:", error);
-    return new Response(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+    console.error("Upload error:", error);
+    return new Response(JSON.stringify({ message: error.message }), { status: 500 });
   }
 }

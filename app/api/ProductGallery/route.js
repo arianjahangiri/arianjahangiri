@@ -6,7 +6,7 @@
  import { NextResponse } from "next/server";
 import ProductGallery from "@/app/modls/ProductGallery/ProductGallery";
 import product from "@/app/modls/catgory/product";
- 
+ import { put } from "@vercel/blob";
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const ProductID = searchParams.get("ProductID");
@@ -18,7 +18,7 @@ export async function GET(req) {
 
   await connect();
   try {
-    console.log("Fetching product11111111111111111111111111111111111111111111 gallery for ProductID:", ProductID);
+    console.log("Fetching product1 gallery for ProductID:", ProductID);
    
  
     const productGallery = await ProductGallery.find({ ProductID })
@@ -49,47 +49,45 @@ export async function GET(req) {
 export async function POST(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("ProductID");
+
   try {
     const data = await request.formData();
     const file = data.get("imageUrl");
     const name = data.get("name");
-    const ProductID = data.get("ProductID");
-    console.log(ProductID+"111111111111111111111");
+    const ProductID = data.get("ProductID") || id;
 
-    // اعتبارسنجی فیلدها
-    if (!file) {
+    console.log(ProductID + "111111111111111111111");
+
+    // اعتبارسنجی
+    if (!file || typeof file === "string") {
       return NextResponse.json({
         success: false,
         message: "آپلود تصویر الزامی می‌باشد",
       }, { status: 400 });
     }
 
-    if (!name || typeof name !== "string" || name.trim() === "" || name.length < 3 || name.length > 30) {
+    if (!name || typeof name !== "string" || name.trim().length < 3 || name.length > 30) {
       return NextResponse.json({
         success: false,
         message: "نام محصول باید بین ۳ تا ۳۰ کاراکتر باشد",
       }, { status: 400 });
     }
 
-    if (!ProductID   ) {
+    if (!ProductID) {
       return NextResponse.json({
         success: false,
         message: "شناسه محصول نامعتبر است",
       }, { status: 400 });
     }
- 
+
     // تبدیل فایل به buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    // مسیر ذخیره‌سازی
-    const uploadDir = join(process.cwd(), "public/uploads");
-
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    const filePath = join(uploadDir, file.name);
+    // آپلود فایل روی Vercel Blob
+    const blob = await put(`product-gallery/${Date.now()}-${file.name}`, buffer, {
+      access: "public",
+      contentType: file.type,
+    });
 
     // اتصال به دیتابیس
     await connect();
@@ -98,11 +96,8 @@ export async function POST(request) {
     const newGallery = await ProductGallery.create({
       name,
       ProductID,
-      imageUrl: `/uploads/${file.name}`,
+      imageUrl: blob.url, // لینک CDN تصویر
     });
-
-    // بعد از ذخیره موفق دیتابیس، فایل ذخیره میشه
-    await writeFile(filePath, buffer);
 
     return NextResponse.json({
       success: true,

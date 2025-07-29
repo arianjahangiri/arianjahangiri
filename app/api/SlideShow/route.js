@@ -4,7 +4,7 @@ import connect from "@/app/utils/db";
 import { join } from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
-
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -35,11 +35,12 @@ export async function POST(request) {
     const name = data.get("name");
     const UrlLink = data.get("UrlLink");
 
-    if (!file) {
+    // اعتبارسنجی
+    if (!file || typeof file === "string") {
       return NextResponse.json({
         success: false,
         message: "آپلود تصویر الزامی می‌باشد",
-      });
+      }, { status: 400 });
     }
 
     if (!name || typeof name !== "string" || name.trim() === "") {
@@ -56,27 +57,29 @@ export async function POST(request) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // تبدیل فایل به buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const uploadDir = join(process.cwd(), "public/uploads");
+    // آپلود به Vercel Blob
+    const blob = await put(`owl-carousel/${Date.now()}-${file.name}`, buffer, {
+      access: "public",
+      contentType: file.type,
+    });
 
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    const filePath = join(uploadDir, file.name);
-    await writeFile(filePath, buffer);
-
+    // اتصال به دیتابیس و ذخیره سند
     await connect();
 
     const product = await owlcarousel.create({
       name,
-      UrlLink, // ✅ اضافه شده به سند
-      imageUrl: `/uploads/${file.name}`,
+      UrlLink,
+      imageUrl: blob.url, // لینک مستقیم تصویر روی CDN
     });
 
-    return new Response(JSON.stringify(product), { status: 200 });
+    return new Response(JSON.stringify(product), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+
   } catch (error) {
     console.error("Error uploading slideshow:", error);
     return new Response(JSON.stringify({ message: error.message }), {
