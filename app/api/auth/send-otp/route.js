@@ -1,74 +1,61 @@
- 
 import Otp from "@/app/modls/Otp/Otp";
 import users from "@/app/modls/User/users";
- 
 import connect from "@/app/utils/db";
-import crypto from "crypto";
+import { put } from "@vercel/blob";
+import { NextResponse } from "next/server";
 
-export async function POST(request) {
-  await connect();
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
+export async function POST(req) {
   try {
-    const { phone, name, type } = await request.json();
+    await connect();
 
-    if (!type || !["register", "login"].includes(type)) {
-      return new Response(
-        JSON.stringify({ message: "نوع درخواست نامعتبر است." }),
+    const data = await req.formData();
+    const name = data.get("name");
+    const phone = data.get("phone");
+    const code = data.get("code");
+    const file = data.get("Image_profile");
+
+    if (!name || !phone || !code || !file || typeof file === "string") {
+      return NextResponse.json(
+        { message: "همه فیلدها و تصویر الزامی هستند" },
         { status: 400 }
       );
     }
 
-    const phoneRegex = /^(\+98|0)?9\d{9}$/;
-    if (!phone || !phoneRegex.test(phone)) {
-      return new Response(
-        JSON.stringify({ message: "شماره تلفن وارد شده صحیح نیست." }),
-        { status: 400 }
-      );
+    const otp = await Otp.findOne({ phone, code });
+    if (!otp || otp.expiresAt < new Date()) {
+      return NextResponse.json({ message: "کد تایید معتبر نیست" }, { status: 400 });
     }
 
-    if (type === "register") {
-      if (!name || name.trim().length < 3 || name.trim().length > 30) {
-        return new Response(
-          JSON.stringify({
-            message: "نام و نام خانوادگی باید بین 3 تا 30 کاراکتر باشد.",
-          }),
-          { status: 400 }
-        );
-      }
+    // تبدیل فایل به Buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-      const existingUser = await users.findOne({ phone }); // fixed 'User'
-      if (existingUser) {
-        return new Response(
-          JSON.stringify({ message: "کاربری با این شماره  قبلا ثبت نام کرده است." }),
-          { status: 400 }
-        );
-      }
-    } else if (type === "login") {
-      const user = await users.findOne({ phone });
-      if (!user) {
-        return new Response(
-          JSON.stringify({ message: "کاربری با این شماره ثبت نام نکرده است." }),
-          { status: 400 }
-        );
-      }
-    }
+    // آپلود تصویر روی Vercel Blob
+    const blob = await put(`profile_images/${Date.now()}-${file.name}`, buffer, {
+      access: "public",
+      contentType: file.type,
+      token: BLOB_TOKEN,
+    });
 
-    const otpCode = crypto.randomInt(100000, 999999).toString();
-
-    await Otp.create({
+    // ساخت یوزر
+    const newUser = await users.create({
+      name,
       phone,
-      code: otpCode,
-      kind: type === "register" ? 1 : 2,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      Image_profile: blob.url, // لینک آنلاین تصویر
+      isAdmin: false,
+      isActive: true,
     });
 
-    return new Response(
-      JSON.stringify({ message: "کد تایید برای شما ارسال شد." }),
-      { status: 200 }
+    // حذف OTP بعد از استفاده
+    await Otp.deleteOne({ phone });
+
+    return NextResponse.json(
+      { message: "ثبت نام موفق بود", user: newUser },
+      { status: 201 }
     );
-  } catch (error) {
-    return new Response(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+  } catch (err) {
+    console.error("POST error:", err);
+    return NextResponse.json({ message: err.message || "خطا در سرور" }, { status: 500 });
   }
 }
