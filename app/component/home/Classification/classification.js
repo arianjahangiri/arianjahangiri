@@ -24,12 +24,12 @@ const categories = [
   },
   {
     name: "آرایشی بهداشتی",
-    imgSrc: "http://trusttahvie.ir/Uploads/Public/images/b388e5f692804a9cb287bcb8f5b37fef.jpg",
+    imgSrc: "https://dkstatics-public.digikala.com/digikala-mega-menu/8a042388b93c5116604f35092a1fb35f8f0756be_1740299467.jpg?x-oss-process=image/resize,m_lfit,h_300,w_300/quality,q_80",
     link: "/main/personal-appliance/",
   },
   {
     name: "خودرو و موتورسیکلت",
-    imgSrc: "http://trusttahvie.ir/Uploads/Public/images/b388e5f692804a9cb287bcb8f5b37fef.jpg",
+    imgSrc: "https://dkstatics-public.digikala.com/digikala-mega-menu/8a042388b93c5116604f35092a1fb35f8f0756be_1740299467.jpg?x-oss-process=image/resize,m_lfit,h_300,w_300/quality,q_80",
     link: "/main/vehicle/",
   },
   // اضافه کن اگر خواستی...
