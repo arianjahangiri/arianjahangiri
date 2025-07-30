@@ -82,7 +82,7 @@ export async function PUT(request, { params }) {
 // 📌 DELETE - حذف برند
 export async function DELETE(req, { params }) {
   await connect();
-  const { id } = await params;
+  const { id } = params;
 
   try {
     const deleted = await Ads.findByIdAndDelete(id);
@@ -90,10 +90,9 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ message: "تبلیغ یافت نشد" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "تبلیغ با موفقیت حذف شد",  }, { status: 200 });
+    return NextResponse.json({ message: "تبلیغ با موفقیت حذف شد" }, { status: 200 });
 
   } catch (err) {
-    console.error("خطا در حذف تبلیغ:", err);
-    return NextResponse.json({ message: "خطا در حذف تبلیغ" ,err}, { status: 500 });
+    return NextResponse.json({ message: "خطا در حذف تبلیغ", error: err.message }, { status: 500 });
   }
 }
