@@ -40,7 +40,7 @@ const AdsSection = () => {
                   rel="noopener noreferrer"
                   aria-label={res.name}
                 >
-                  <Image
+                  <image
                     src={res.imageUrl}
                     alt={res.name}
                   
