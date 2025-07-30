@@ -1,4 +1,4 @@
-"use client";
+"use client";  
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { getCategories } from "../../home/lib/getCategories";
@@ -14,6 +14,7 @@ import {
   FaKey,
   FaChevronDown,
   FaRegUser,
+  FaUserShield,  // آیکون ادمین
 } from "react-icons/fa";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -33,7 +34,7 @@ const Header = () => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { cart } = useCart();
-  const totalItems = cart?.items?.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -139,6 +140,20 @@ const Header = () => {
 
         {/* آیکون‌ها و پروفایل */}
         <div className="flex items-center gap-4">
+          {/* دکمه ادمین */}
+          {status === "authenticated" && session?.user?.isAdmin && (
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="text-xl p-2 rounded-full transition-colors hover:bg-gray-100 text-red-600 cursor-pointer"
+            >
+              <Link href="/admin" aria-label="پنل مدیریت" className="flex items-center gap-1">
+                <FaUserShield />
+                <span className="hidden sm:inline text-sm font-medium">ادمین</span>
+              </Link>
+            </motion.div>
+          )}
+
           <motion.div 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -177,26 +192,26 @@ const Header = () => {
             </div>
           ) : (
             <div className="relative ">
-       <motion.div
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-  className="cursor-pointer"
->
-  {session?.user?.Image_profile ? (
-    <Image
-      src={session.user.Image_profile}
-      alt="User Avatar"
-      width={36}
-      height={36}
-      className="rounded-full w-10 h-10  object-cover   shadow-sm"
-    />
-  ) : (
-    <div className="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-blue-100 border-blue-500 text-blue-500">
-      <FaRegUser />
-    </div>
-  )}
-</motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                className="cursor-pointer"
+              >
+                {session?.user?.Image_profile ? (
+                  <Image
+                    src={session.user.Image_profile}
+                    alt="User Avatar"
+                    width={36}
+                    height={36}
+                    className="rounded-full w-10 h-10 object-cover shadow-sm"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-blue-100 border-blue-500 text-blue-500">
+                    <FaRegUser />
+                  </div>
+                )}
+              </motion.div>
 
               <AnimatePresence>
                 {profileMenuOpen && (
@@ -234,6 +249,14 @@ const Header = () => {
                       <FaHeart className="ml-2 text-blue-500" />
                       <span>علاقه‌مندی‌ها</span>
                     </Link>
+
+                    {/* اگر ادمین هست باز هم توی منوی پروفایل دکمه ادمین بزار */}
+                    {session?.user?.isAdmin && (
+                      <Link href="/admin" className="flex items-center px-4 py-3 transition-colors hover:bg-red-50 text-red-600 font-semibold">
+                        <FaUserShield className="ml-2" />
+                        <span>پنل مدیریت</span>
+                      </Link>
+                    )}
                     
                     <div className="border-t border-gray-100">
                       <LogoutButton className="w-full text-left flex items-center px-4 py-3 transition-colors hover:bg-red-50 text-gray-700">
@@ -267,7 +290,7 @@ const Header = () => {
                    
                     <Link 
                       href={`/category/${cat.slug}`} 
-                      className="text-[#2b2d2e] decoration-white      hover:text-blue-600 transition-colors font-medium"
+                      className="text-[#2b2d2e] decoration-white hover:text-blue-600 transition-colors font-medium"
                     >
                       {cat.title}
                     </Link>
@@ -403,6 +426,19 @@ const Header = () => {
                         </p>
                       </div>
                     </div>
+
+                    {/* دکمه ادمین در منوی موبایل */}
+                    {session?.user?.isAdmin && (
+                      <Link 
+                        href="/admin"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg transition-colors font-semibold text-red-600 border border-red-600 hover:bg-red-50"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <FaUserShield />
+                        <span>پنل مدیریت</span>
+                      </Link>
+                    )}
+
                     <LogoutButton 
                       className="w-full py-2.5 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 bg-red-50 text-red-500 hover:bg-red-100"
                     >
