@@ -3,11 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**.vercel-storage.com', // برای تمام subdomain های blob
+        protocol: "https",
+        hostname: "**.vercel-storage.com",
       },
     ],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
