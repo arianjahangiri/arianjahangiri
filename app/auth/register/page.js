@@ -51,12 +51,17 @@ const Register = () => {
     setLoading(true);
 
     try {
+      // ارسال با استفاده از FormData به جای JSON
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("email", email);
+      formData.append("type", "register");
+
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, phone, email, type: "register" }),
+        body: formData,
+        // **هدر Content-Type را ننویسید**
       });
 
       const data = await res.json();
