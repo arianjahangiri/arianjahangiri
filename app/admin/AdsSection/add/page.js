@@ -14,15 +14,15 @@ const AddImage = () => {
 
   const validateForm = () => {
     if (!name || name.trim() === "") {
-      setFormError("نام محصول الزامی میباشد");
+      setFormError("نام محصول الزامی می‌باشد");
       return false;
     } else if (name.length < 3 || name.length > 30) {
-      setFormError("نام محصول باید بین ۳ تا ۳۰ باشد");
+      setFormError("نام محصول باید بین ۳ تا ۳۰ کاراکتر باشد");
       return false;
     }
 
     if (!image) {
-      setFormError("انتخاب تصویر الزامی میباشد");
+      setFormError("انتخاب تصویر الزامی است");
       return false;
     }
 
@@ -32,41 +32,44 @@ const AddImage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("UrlLink", url);  // ارسال مقدار UrlLink
+      formData.append("UrlLink", url);
       formData.append("imageUrl", image);
 
-      // ارسال داده‌ها به API
-      const response = await fetch("https://arianjahangiri.vercel.app", {
+      const response = await fetch("/api/ads", {
         method: "POST",
         body: formData,
       });
 
-      if (response.status === 400) {
-        let message = await response.json();
-        setFormError(message.message);
+      const result = await response.json();
+
+      if (!response.ok) {
+        setFormError(result.message || "مشکلی در ارسال اطلاعات پیش آمد");
+        return;
       }
 
-      if (!response.ok) throw new Error("مشکلی در ساخت محصول پیش آمده است");
-      router.push("/");  // هدایت به صفحه اصلی پس از موفقیت
-    } catch (error) {
-      setError(error.message);
+      // موفقیت: پاکسازی فرم و هدایت
+      setName("");
+      setUrl("");
+      setImage(null);
+      router.push("/");
+
+    } catch (err) {
+      setError("خطا در ارتباط با سرور");
     }
   };
 
   return (
     <Container fluid>
       <Row>
-        <Col md={2} className="vh-100"></Col>
+        <Col md={2}></Col>
         <Col md={10}>
-          <  div className="p-4">
-            <h2 className="my-4">افزودن محصول</h2>
+          <div className="p-4">
+            <h2 className="my-4">افزودن اسلایدشو</h2>
             {error && <Alert variant="danger">{error}</Alert>}
             {formError && <Alert variant="warning">{formError}</Alert>}
 
@@ -75,19 +78,19 @@ const AddImage = () => {
                 <Form.Label>نام</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="نام ..."
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  placeholder="نام اسلاید..."
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>آدرس لینک عکس</Form.Label>
+                <Form.Label>لینک دلخواه (اختیاری)</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="آدرس..."
                   value={url}
-                  onChange={(e) => setUrl(e.target.value)}  // گرفتن آدرس لینک
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://example.com"
                 />
               </Form.Group>
 
@@ -96,14 +99,13 @@ const AddImage = () => {
                 <Form.Control
                   type="file"
                   accept="image/*"
-                  required
                   onChange={(e) => setImage(e.target.files[0])}
                 />
               </Form.Group>
 
               <Button type="submit">ذخیره</Button>
             </Form>
-          </  div>
+          </div>
         </Col>
       </Row>
     </Container>

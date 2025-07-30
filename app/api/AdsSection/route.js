@@ -1,31 +1,17 @@
- 
 import connect from "@/app/utils/db";
-import { join } from "path";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
 import { NextResponse } from "next/server";
 import Ads from "@/app/modls/AdesSection/Ads";
 import { put } from "@vercel/blob";
 
-// GET: گرفتن تمام اسلایدشوها
-export async function GET(req) {
+// GET: گرفتن لیست اسلایدشوها
+export async function GET() {
   await connect();
 
   try {
     const Adses = await Ads.find({});
-    return new Response(JSON.stringify(Adses), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(Adses, { status: 200 });
   } catch (error) {
-    console.error("Error fetching slideshows:", error);
-    return new Response(
-      JSON.stringify({ error: "خطا در دریافت اسلایدشوها" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return NextResponse.json({ error: "خطا در دریافت اسلایدشوها" }, { status: 500 });
   }
 }
 
@@ -38,32 +24,16 @@ export async function POST(request) {
     const UrlLink = data.get("UrlLink");
 
     if (!file || typeof file === "string") {
-      return NextResponse.json({
-        success: false,
-        message: "آپلود تصویر الزامی می‌باشد",
-      }, { status: 400 });
+      return NextResponse.json({ success: false, message: "آپلود تصویر الزامی است" }, { status: 400 });
     }
 
-    if (!name || typeof name !== "string" || name.trim() === "") {
-      return new Response(
-        JSON.stringify({ message: "نام محصول الزامی می‌باشد" }),
-        { status: 400 }
-      );
+    if (!name || name.trim() === "" || name.length < 3 || name.length > 30) {
+      return NextResponse.json({ message: "نام باید بین ۳ تا ۳۰ کاراکتر باشد" }, { status: 400 });
     }
 
-    if (name.length < 3 || name.length > 30) {
-      return new Response(
-        JSON.stringify({ message: "نام باید بین ۳ تا ۳۰ کاراکتر باشد" }),
-        { status: 400 }
-      );
-    }
-
-    const validUrlLink = UrlLink ? UrlLink : null;
-
-    // تبدیل فایل به buffer برای آپلود
+    const validUrlLink = UrlLink && UrlLink.trim() !== "" ? UrlLink : null;
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // آپلود به Vercel Blob
     const blob = await put(`ads/${Date.now()}-${file.name}`, buffer, {
       access: "public",
       contentType: file.type,
@@ -74,18 +44,12 @@ export async function POST(request) {
     const newAd = await Ads.create({
       name,
       UrlLink: validUrlLink,
-      imageUrl: blob.url, // لینک CDN تصویر
+      imageUrl: blob.url,
     });
 
-    return new Response(JSON.stringify(newAd), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(newAd, { status: 201 });
 
   } catch (error) {
-    console.error("Error uploading ad:", error);
-    return new Response(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
