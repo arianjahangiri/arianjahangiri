@@ -15,18 +15,24 @@ const Page = () => {
   const tableRef = useRef(null);
   const route = useRouter();
 
-  const fetchDel = async (id) => {
-    if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;
-    try {
-        await fetch(`https://arianjahangiri.vercel.app/api/AdsSection/${id}`, {
+ const fetchDel = async (id) => {
+  if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;
+  try {
+    const res = await fetch(`https://arianjahangiri.vercel.app/api/AdsSection/${id}`, {
+      method: "DELETE",
+    });
 
-        method: "DELETE",
-      });
-      fetchData();
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+    const result = await res.json();
+    console.log("نتیجه حذف:", result);
+
+    if (!res.ok) throw new Error(result.message || "خطا در حذف تبلیغ");
+
+    fetchData(); // رفرش لیست
+  } catch (error) {
+    console.error("خطا در fetchDel:", error.message);
+  }
+};
+
 
   const fetchData = async () => {
     try {

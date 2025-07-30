@@ -81,7 +81,7 @@ export async function PUT(request, { params }) {
 // 📌 DELETE - حذف برند
 export async function DELETE(req, { params }) {
   await connect();
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const deleted = await Ads.findByIdAndDelete(id);
