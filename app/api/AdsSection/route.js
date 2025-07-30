@@ -1,7 +1,9 @@
-import connect from "@/app/utils/db";
+ 
 import { NextResponse } from "next/server";
-import Ads from "@/app/modls/AdesSection/Ads";
+ 
 import { put } from "@vercel/blob";
+import connect from "@/app/utils/db";
+import Ads from "@/app/modls/AdesSection/Ads";
 
 // GET: گرفتن لیست اسلایدشوها
 export async function GET() {

@@ -40,7 +40,7 @@ const AddImage = () => {
       formData.append("UrlLink", url);
       formData.append("imageUrl", image);
 
-      const response = await fetch("/api/ads", {
+      const response = await fetch("/api/AdsSection", {
         method: "POST",
         body: formData,
       });
