@@ -1,18 +1,26 @@
-import { writeFile } from "fs/promises";
-import { join } from "path";
+import { Buffer } from "buffer";
 import Otp from "@/app/modls/Otp/Otp";
 import users from "@/app/modls/User/users";
 import connect from "@/app/utils/db";
+import { put } from "@vercel/blob";
 
 export async function POST(req) {
   await connect();
 
   try {
+    const contentType = req.headers.get("content-type") || "";
+    if (!contentType.includes("multipart/form-data")) {
+      return new Response(
+        JSON.stringify({ message: "نوع درخواست باید multipart/form-data باشد." }),
+        { status: 400 }
+      );
+    }
+
     const data = await req.formData();
     const name = data.get("name");
     const phone = data.get("phone");
     const code = data.get("code");
-    const email = data.get("email");  // اضافه کردن ایمیل
+    const email = data.get("email");
     const file = data.get("Image_profile");
 
     if (!name || !phone || !code || !file || !email) {
@@ -22,7 +30,6 @@ export async function POST(req) {
       );
     }
 
-    // اعتبارسنجی ساده ایمیل
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return new Response(
@@ -39,18 +46,17 @@ export async function POST(req) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const uploadDir = join(process.cwd(), "public/uploads");
-    const filePath = join(uploadDir, file.name);
-
-    await writeFile(filePath, buffer);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const blob = await put(`avatars/${Date.now()}-${file.name}`, buffer, {
+      access: "public",
+      contentType: file.type,
+    });
 
     const newUser = await users.create({
       name,
       phone,
-      email,  // ذخیره ایمیل
-      Image_profile: `/uploads/${file.name}`,
+      email,
+      Image_profile: blob.url,
       isAdmin: false,
       isActive: true,
     });
@@ -62,6 +68,7 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (err) {
+    console.error("خطا:", err);
     return new Response(
       JSON.stringify({ message: err.message || "خطا در سرور" }),
       { status: 500 }
