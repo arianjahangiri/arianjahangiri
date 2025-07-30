@@ -1,5 +1,3 @@
- 
- 
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
 import Otp from "@/app/modls/Otp/Otp";
@@ -13,6 +11,8 @@ export const authOptions = {
       credentials: {
         phone: { label: "Phone", type: "text" },
         code: { label: "OTP", type: "text" },
+        // اگر بخوای میتونی اینجا ایمیل هم اضافه کنی اما ورود با ایمیل و OTP باید سمت کلاینت باشه
+        // email: { label: "Email", type: "email" },
       },
       async authorize(credentials) {
         await connect();
@@ -33,6 +33,7 @@ export const authOptions = {
         return {
           id: user._id.toString(),
           phone: user.phone,
+          email: user.email,           // اضافه شده
           name: user.name,
           Image_profile: user.Image_profile,
           isAdmin: user.isAdmin,
@@ -55,9 +56,9 @@ export const authOptions = {
         token.id = user.id;
         token.name = user.name;
         token.phone = user.phone;
+        token.email = user.email;               // اضافه شده
         token.isAdmin = user.isAdmin;
         token.Image_profile = user.Image_profile;
-        
       }
       return token;
     },
@@ -67,6 +68,7 @@ export const authOptions = {
         id: token.id,
         name: token.name,
         phone: token.phone,
+        email: token.email,                   // اضافه شده
         isAdmin: token.isAdmin,
         Image_profile: token.Image_profile,
       };
@@ -77,5 +79,3 @@ export const authOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-
-// 18-3-2-1

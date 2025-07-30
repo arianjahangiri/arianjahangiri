@@ -14,40 +14,61 @@ export async function POST(req) {
     const name = data.get("name");
     const phone = data.get("phone");
     const code = data.get("code");
+    const email = data.get("email"); // ✅ گرفتن ایمیل
     const file = data.get("Image_profile");
 
-    if (!name || !phone || !code || !file || typeof file === "string") {
+    // بررسی فیلدها
+    if (
+      !name ||
+      !phone ||
+      !code ||
+      !email ||
+      !file ||
+      typeof file === "string"
+    ) {
       return NextResponse.json(
-        { message: "همه فیلدها و تصویر الزامی هستند" },
+        { message: "همه فیلدها از جمله ایمیل و تصویر الزامی هستند" },
         { status: 400 }
       );
     }
 
-    const otp = await Otp.findOne({ phone, code });
-    if (!otp || otp.expiresAt < new Date()) {
-      return NextResponse.json({ message: "کد تایید معتبر نیست" }, { status: 400 });
+    // بررسی ساده ایمیل
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { message: "ایمیل وارد شده معتبر نیست" },
+        { status: 400 }
+      );
     }
 
-    // تبدیل فایل به Buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
+    // بررسی صحت کد تایید
+    const otp = await Otp.findOne({ phone, code });
+    if (!otp || otp.expiresAt < new Date()) {
+      return NextResponse.json(
+        { message: "کد تایید معتبر نیست یا منقضی شده" },
+        { status: 400 }
+      );
+    }
 
-    // آپلود تصویر روی Vercel Blob
+    // آپلود تصویر
+    const buffer = Buffer.from(await file.arrayBuffer());
     const blob = await put(`profile_images/${Date.now()}-${file.name}`, buffer, {
       access: "public",
       contentType: file.type,
       token: BLOB_TOKEN,
     });
 
-    // ساخت یوزر
+    // ثبت کاربر
     const newUser = await users.create({
       name,
       phone,
-      Image_profile: blob.url, // لینک آنلاین تصویر
+      email, // ✅ ذخیره ایمیل
+      Image_profile: blob.url,
       isAdmin: false,
       isActive: true,
     });
 
-    // حذف OTP بعد از استفاده
+    // حذف OTP
     await Otp.deleteOne({ phone });
 
     return NextResponse.json(
@@ -56,6 +77,9 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("POST error:", err);
-    return NextResponse.json({ message: err.message || "خطا در سرور" }, { status: 500 });
+    return NextResponse.json(
+      { message: err.message || "خطا در سرور" },
+      { status: 500 }
+    );
   }
 }

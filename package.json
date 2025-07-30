@@ -41,6 +41,7 @@
     "react-multi-date-picker": "^4.5.2",
     "react-speech-recognition": "^4.0.1",
     "react-virtualized": "^9.22.6",
+    "resend": "^4.7.0",
     "socket.io-client": "^4.8.1",
     "swiper": "^11.2.10",
     "uuid": "^11.1.0",
