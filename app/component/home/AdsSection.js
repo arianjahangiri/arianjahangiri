@@ -40,13 +40,13 @@ const AdsSection = () => {
                   rel="noopener noreferrer"
                   aria-label={res.name}
                 >
-                  <image
+                  <Image
                     src={res.imageUrl}
                     alt={res.name}
-                  
+                    fill
                     className="object-cover w-full h-full"
                     sizes="(max-width: 768px) 100vw, 50vw"
-               
+                    priority
                   />
                 </a>
               </div>
