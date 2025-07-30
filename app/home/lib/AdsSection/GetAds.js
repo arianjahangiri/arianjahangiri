@@ -3,7 +3,7 @@ export async function getAdsImage() {
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/AdsSection`,
       { 
          next: { revalidate: 200 }, // کش به مدت 300 ثانیه (5 دقیقه)
-   cache: "force-cache",
+   cache: "no-cache",
       }
     );
   

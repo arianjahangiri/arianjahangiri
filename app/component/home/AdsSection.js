@@ -41,7 +41,7 @@ const AdsSection = () => {
                   aria-label={res.name}
                 >
                   <Image
-                    src={res.imageUrl}
+                    src={`${res.imageUrl}`}
                     alt={res.name}
                     fill
                     className="object-cover w-full h-full"
