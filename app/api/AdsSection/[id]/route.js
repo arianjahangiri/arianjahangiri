@@ -2,6 +2,7 @@ import connect from "@/app/utils/db";
 import Brand from "@/app/modls/Brand/Brand";
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import { error } from "jquery";
 
 const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
@@ -89,10 +90,10 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ message: "تبلیغ یافت نشد" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "تبلیغ با موفقیت حذف شد" }, { status: 200 });
+    return NextResponse.json({ message: "تبلیغ با موفقیت حذف شد",  }, { status: 200 });
 
   } catch (err) {
     console.error("خطا در حذف تبلیغ:", err);
-    return NextResponse.json({ message: "خطا در حذف تبلیغ" }, { status: 500 });
+    return NextResponse.json({ message: "خطا در حذف تبلیغ" ,err}, { status: 500 });
   }
 }
