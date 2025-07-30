@@ -84,17 +84,15 @@ export async function DELETE(req, { params }) {
   const { id } = params;
 
   try {
-    const deleted = await Brand.findByIdAndDelete(id);
+    const deleted = await Ads.findByIdAndDelete(id);
     if (!deleted) {
-      return NextResponse.json({ message: "برند یافت نشد" }, { status: 404 });
+      return NextResponse.json({ message: "تبلیغ یافت نشد" }, { status: 404 });
     }
 
-    // ⚠️ می‌تونی در اینجا تصویر برند را هم از Blob حذف کنی اگر لازم بود
-
-    return NextResponse.json({ message: "برند حذف شد" }, { status: 200 });
+    return NextResponse.json({ message: "تبلیغ با موفقیت حذف شد" }, { status: 200 });
 
   } catch (err) {
-    console.error("خطا در حذف برند:", err);
-    return NextResponse.json({ message: "خطا در حذف برند" }, { status: 500 });
+    console.error("خطا در حذف تبلیغ:", err);
+    return NextResponse.json({ message: "خطا در حذف تبلیغ" }, { status: 500 });
   }
 }
