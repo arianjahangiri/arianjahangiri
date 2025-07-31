@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Link from "next/link";
 import {
-  FaBan, FaBox, FaIndustry, FaInfoCircle, FaList, FaModx,
+  FaBan, FaBox, FaGamepad, FaIndustry, FaInfoCircle, FaList, FaModx,
   FaSlidersH, FaTag, FaUser
 } from "react-icons/fa";
 
@@ -20,6 +20,7 @@ const navLinks = [
   { href: "/admin/product/post", icon: FaBox, label: "محصولات" },
   { href: "/categories", icon: FaList, label: "دسته‌بندی‌ها" },
   { href: "/admin/comment/post", icon: FaInfoCircle, label: "کامنت‌ها" },
+  { href: "/admin/game", icon: FaGamepad, label: "بازی"},
   { href: "/admin/Brand/post", icon: FaIndustry, label: "برندها" },
   { href: "/admin/discountcode/post", icon: FaTag, label: "کد تخفیف" },
   { href: "/admin/AdsSection/post", icon: FaBan, label: "بنر تبلیغات" },

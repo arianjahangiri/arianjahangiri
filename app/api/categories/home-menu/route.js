@@ -24,3 +24,4 @@ export async function POST(request) {
     return new NextResponse("خطا در ایجاد دسته‌بندی: " + err.message, { status: 500 });
   }
 }
+ 
