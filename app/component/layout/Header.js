@@ -114,12 +114,12 @@ const Header = () => {
           <input
       type="text"
       placeholder="جستجو محصولات..."
-      value={searchQuery}
+      value={searchQuerys}
       onChange={(e) => setSearchQuerys(e.target.value)}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && searchQuery.trim()) {
-          router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-          setSearchQuery("");
+        if (e.key === "Enter" && searchQuerys.trim()) {
+          router.push(`/search?q=${encodeURIComponent(searchQuerys)}`);
+          setSearchQuerys("");
         }
       }}
       className="border rounded px-3 py-2 w-full"
