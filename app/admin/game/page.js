@@ -8,12 +8,12 @@ const AI = "O";
 const WINNING_COMBOS = [
   [0, 1, 2],
   [3, 4, 5],
-  [6, 7, 8],
+  [6, 7, 8], // Rows
   [0, 3, 6],
   [1, 4, 7],
-  [2, 5, 8],
+  [2, 5, 8], // Columns
   [0, 4, 8],
-  [2, 4, 6],
+  [2, 4, 6], // Diagonals
 ];
 
 function checkWinner(board, player) {
@@ -43,10 +43,11 @@ function minimax(newBoard, player) {
     move.index = availSpots[i];
     newBoard[availSpots[i]] = player;
 
-    move.score =
-      player === AI
-        ? minimax(newBoard, HUMAN).score
-        : minimax(newBoard, AI).score;
+    if (player === AI) {
+      move.score = minimax(newBoard, HUMAN).score;
+    } else {
+      move.score = minimax(newBoard, AI).score;
+    }
 
     newBoard[availSpots[i]] = null;
     moves.push(move);
@@ -71,13 +72,6 @@ function minimax(newBoard, player) {
     }
   }
 
-  // 🔥 40% احتمال انتخاب حرکت غیر بهینه برای قابل شکست بودن AI
-  const makeMistake = Math.random() < 0.1;
-  if (makeMistake && moves.length > 1) {
-    const otherMoves = moves.filter((_, idx) => idx !== bestMove);
-    return otherMoves[Math.floor(Math.random() * otherMoves.length)];
-  }
-
   return moves[bestMove];
 }
 
@@ -85,8 +79,9 @@ export default function TicTacToeGame() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isHumanTurn, setIsHumanTurn] = useState(true);
   const [message, setMessage] = useState("");
-  const [mode, setMode] = useState("ai"); // ai یا multiplayer
+  const [mode, setMode] = useState("ai"); // ai or multiplayer
 
+  // هوش مصنوعی فقط وقتی که نوبتش باشه و پیام برنده‌ای نیست، حرکت می‌کنه
   useEffect(() => {
     if (mode === "ai" && !isHumanTurn && !message) {
       const bestMove = minimax(board.slice(), AI);
@@ -141,6 +136,7 @@ export default function TicTacToeGame() {
     <div className="max-w-sm mx-auto p-4 text-center">
       <h2 className="text-2xl font-bold mb-4">بازی دوز پیشرفته 🎮</h2>
 
+      {/* انتخاب حالت بازی */}
       <div className="flex justify-center gap-4 mb-4">
         <button
           onClick={() => switchMode("ai")}
