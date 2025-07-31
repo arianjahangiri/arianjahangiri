@@ -88,9 +88,10 @@ export default function TicTacToeHard() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isHumanTurn, setIsHumanTurn] = useState(true);
   const [message, setMessage] = useState("");
+  const [isMultiplayer, setIsMultiplayer] = useState(false); // حالت مولتی پلیر
 
   useEffect(() => {
-    if (!isHumanTurn) {
+    if (!isMultiplayer && !isHumanTurn) {
       const bestMove = minimax(board.slice(), AI);
       if (bestMove && bestMove.index !== undefined) {
         const newBoard = [...board];
@@ -105,21 +106,21 @@ export default function TicTacToeHard() {
         }
       }
     }
-  }, [isHumanTurn, board]);
+  }, [isHumanTurn, board, isMultiplayer]);
 
   const handleClick = (index) => {
     if (board[index] || message) return;
 
     const newBoard = [...board];
-    newBoard[index] = HUMAN;
+    newBoard[index] = isHumanTurn ? HUMAN : AI;
     setBoard(newBoard);
 
-    if (checkWinner(newBoard, HUMAN)) {
-      setMessage("تبریک! شما برنده شدید 🎉");
+    if (checkWinner(newBoard, isHumanTurn ? HUMAN : AI)) {
+      setMessage(isHumanTurn ? "تبریک! بازیکن اول برنده شد 🎉" : isMultiplayer ? "تبریک! بازیکن دوم برنده شد 🎉" : "کامپیوتر برنده شد! 😢");
     } else if (isTie(newBoard)) {
       setMessage("بازی مساوی شد!");
     } else {
-      setIsHumanTurn(false);
+      setIsHumanTurn(!isHumanTurn);
     }
   };
 
@@ -129,25 +130,47 @@ export default function TicTacToeHard() {
     setIsHumanTurn(true);
   };
 
+  const toggleMode = () => {
+    resetGame();
+    setIsMultiplayer((prev) => !prev);
+  };
+
   return (
     <div className="max-w-sm mx-auto p-4 text-center">
-      <h2 className="text-2xl font-bold mb-4">بازی دوز سخت 🎯</h2>
-      <div className="grid grid-cols-3 gap-2 mb-4">
+      <h2 className="text-2xl font-bold mb-4">بازی دوز {isMultiplayer ? "مولتی‌پلیر" : "سخت"} 🎯</h2>
+
+      <button
+        onClick={toggleMode}
+        className="mb-4 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full max-w-xs mx-auto block"
+      >
+        تغییر حالت به {isMultiplayer ? "ربات" : "مولتی‌پلیر"}
+      </button>
+
+      <div className="grid grid-cols-3 gap-2 mb-4 max-w-full mx-auto" style={{ maxWidth: "360px" }}>
         {board.map((cell, idx) => (
           <button
             key={idx}
             onClick={() => handleClick(idx)}
             disabled={!!cell || !!message}
-            className="w-20 h-20 border rounded flex items-center justify-center text-5xl font-bold hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
+            className="
+              w-full aspect-square
+              border rounded
+              flex items-center justify-center
+              text-5xl font-bold
+              hover:bg-gray-100
+              disabled:cursor-not-allowed disabled:text-gray-400
+            "
           >
             {cell}
           </button>
         ))}
       </div>
+
       {message && <div className="mb-4 text-lg font-semibold">{message}</div>}
+
       <button
         onClick={resetGame}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full max-w-xs mx-auto block"
       >
         شروع مجدد بازی
       </button>
