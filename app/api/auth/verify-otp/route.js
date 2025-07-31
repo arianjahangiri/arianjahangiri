@@ -1,62 +1,44 @@
-import { Buffer } from "buffer";
+import { put } from "@vercel/blob";
 import Otp from "@/app/modls/Otp/Otp";
 import users from "@/app/modls/User/users";
 import connect from "@/app/utils/db";
-import { put } from "@vercel/blob";
 
 export async function POST(req) {
   await connect();
 
   try {
-    const contentType = req.headers.get("content-type") || "";
-    if (!contentType.includes("multipart/form-data")) {
-      return new Response(
-        JSON.stringify({ message: "نوع درخواست باید multipart/form-data باشد." }),
-        { status: 400 }
-      );
-    }
-
     const data = await req.formData();
     const name = data.get("name");
     const phone = data.get("phone");
-    const code = data.get("code");
     const email = data.get("email");
+    const code = data.get("code");
     const file = data.get("Image_profile");
 
-    if (!name || !phone || !code || !file || !email) {
-      return new Response(
-        JSON.stringify({ message: "همه فیلدها از جمله ایمیل الزامی هستند" }),
-        { status: 400 }
-      );
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(
-        JSON.stringify({ message: "ایمیل وارد شده معتبر نیست" }),
-        { status: 400 }
-      );
+    if (!name || !phone || !code || !file|| !email) {
+      return new Response(JSON.stringify({ message: "همه فیلدها الزامی هستند" }), {
+        status: 400,
+      });
     }
 
     const otp = await Otp.findOne({ phone, code });
     if (!otp || otp.expiresAt < new Date()) {
-      return new Response(
-        JSON.stringify({ message: "کد تایید معتبر نیست یا منقضی شده" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ message: "کد تایید معتبر نیست" }), {
+        status: 400,
+      });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const blob = await put(`avatars/${Date.now()}-${file.name}`, buffer, {
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+
+    const blobRes = await put(file.name, fileBuffer, {
       access: "public",
-      contentType: file.type,
+      token: process.env.BLOB_READ_WRITE_TOKEN, // مطمئن شو این تو env ست شده باشه
     });
 
     const newUser = await users.create({
       name,
-      phone,
       email,
-      Image_profile: blob.url,
+      phone,
+      Image_profile: blobRes.url,
       isAdmin: false,
       isActive: true,
     });
@@ -68,10 +50,8 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (err) {
-    console.error("خطا:", err);
-    return new Response(
-      JSON.stringify({ message: err.message || "خطا در سرور" }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 500,
+    });
   }
 }
