@@ -1,9 +1,11 @@
-// /api/auth/verify-otp/route.js یا route.ts
-import { writeFile } from "fs/promises";
-import { join } from "path";
+// /api/auth/verify-otp/route.js
+import { put } from "@vercel/blob";
+import { randomUUID } from "crypto";
 import Otp from "@/app/modls/Otp/Otp";
 import users from "@/app/modls/User/users";
 import connect from "@/app/utils/db";
+
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
 export async function POST(req) {
   await connect();
@@ -24,17 +26,16 @@ export async function POST(req) {
       return new Response(JSON.stringify({ message: "کد تایید معتبر نیست" }), { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const uploadDir = join(process.cwd(), "public/uploads");
-    const filePath = join(uploadDir, file.name);
-
-    await writeFile(filePath, buffer);
+    const blobName = `${randomUUID()}-${file.name}`;
+    const blob = await put(blobName, file, {
+      access: "public",
+      token: BLOB_TOKEN,
+    });
 
     const newUser = await users.create({
       name,
       phone,
-      Image_profile: `/uploads/${file.name}`,
+      Image_profile: blob.url,
       isAdmin: false,
       isActive: true,
     });
