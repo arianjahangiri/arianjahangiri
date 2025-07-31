@@ -1,97 +1,206 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { FaUserEdit, FaTrashAlt, FaCamera } from "react-icons/fa";
 
-const AccountSettings = () => {
-  const { data: session, status } = useSession();
-  const [name, setName] = useState();
-  const [phone, setPhone] = useState();
-  
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+} from "react-bootstrap";
 
-  async function updateUser() {
-    await fetch("/api/User", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, phone   }),
-    });
-  }
+const Register = () => {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState(""); // اضافه شده ایمیل
+  const [Image_profile, setImage_profile] = useState(null);
 
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        در حال بارگذاری...
-      </div>
-    );
-  }
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [step, setStep] = useState(1);
+  const router = useRouter();
 
-  const user = session?.user;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!name || name.trim().length < 3 || name.trim().length > 30) {
+      setError("نام و نام خانوادگی باید بین 3 تا 30 کاراکتر باشد.");
+      return;
+    }
+
+    if (!email || !emailRegex.test(email)) {
+      setError("ایمیل وارد شده معتبر نیست.");
+      return;
+    }
+
+    const phoneRegex = /^(\+98|0)?9\d{9}$/;
+    if (!phone || !phoneRegex.test(phone)) {
+      setError("شماره تلفن وارد شده صحیح نیست.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, phone, email, type: "register" }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "خطایی سمت سرور رخ داده است.");
+      } else {
+        setSuccess("کد تایید برای شما ارسال شد.");
+        setStep(2);
+      }
+    } catch (error) {
+      setError("خطایی رخ داده است.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!otp || otp.length !== 6) {
+      setError("کد تایید باید 6 رقمی باشد.");
+      return;
+    }
+
+    if (!Image_profile) {
+      setError("تصویر پروفایل را انتخاب کنید.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("phone", phone);
+    formData.append("email", email); // اضافه شده ایمیل به فرم دیتا
+    formData.append("code", otp);
+    formData.append("Image_profile", Image_profile);
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "خطا در ثبت‌نام");
+      } else {
+        setSuccess("ثبت‌نام موفقیت‌آمیز بود");
+        router.push("/");
+      }
+    } catch (err) {
+      setError("خطایی رخ داد");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-10 text-gray-800">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10">
-        <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <FaUserEdit className="text-blue-500" /> تنظیمات حساب کاربری
-        </h1>
-
-        <div className="flex items-center gap-6 mb-8 flex-col sm:flex-row text-center sm:text-left">
-          <div className="relative group w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100">
-            <img
-              src={user?.Image_profile || "/images/default-user.jpg"}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-3">
-              <button className="text-white text-xs bg-blue-600 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-blue-700">
-                <FaCamera /> تغییر
-              </button>
-              <button className="text-white text-xs bg-red-500 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-red-600">
-                <FaTrashAlt /> حذف
-              </button>
-            </div>
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">{user?.name || "نام کاربر"}</h2>
-          
-          </div>
-        </div>
-
-        <form className="space-y-6">
-          <div>
-            <label className="block mb-1 font-medium">نام و نام خانوادگی</label>
-            <input
-              type="text"
-              onChange={(e) => setName(e.target.value)}
-              defaultValue={user?.name || ""}
-              placeholder="مثلاً علی رضایی"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        
-          <div>
-            <label className="block mb-1 font-medium">شماره موبایل</label>
-            <input
-              type="tel"
-              onChange={(e) => setPhone(e.target.value)}
-              defaultValue={user?.phone || ""}
-              placeholder="مثلاً 09123456789"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="pt-4">
-            <button
-              type="button"
-              onClick={updateUser}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition"
+    <div className="w-full" style={{ backgroundColor: "#f9f9f9" }}>
+      <Container className="d-flex justify-content-center align-items-center w-full">
+        <Row className="w-full d-flex justify-content-center align-items-center">
+          <Col md={6} lg={4}>
+            <Card
+              className="shadow py-3"
+              style={{ borderRadius: "10px", border: "none" }}
             >
-              ذخیره تغییرات
-            </button>
-          </div>
-        </form>
-      </div>
+              <Card.Body>
+                <h2
+                  className="text-center mb-4 fw-bolder"
+                  style={{ color: "#212529" }}
+                >
+                  ثبت نام در سیستم
+                </h2>
+                {error && <Alert variant="danger">{error}</Alert>}
+                {success && <Alert variant="success">{success}</Alert>}
+                {step === 1 && (
+                  <Form onSubmit={handleSendOtp}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>تصویر</Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImage_profile(e.target.files[0])}
+                      />
+                    </Form.Group>
+                    <Form.Group className="my-4">
+                      <Form.Label>نام و نام خانوادگی</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="نام و نام خانوادگی"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="my-4">
+                      <Form.Label>ایمیل</Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="ایمیل"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="my-4">
+                      <Form.Label>شماره تلفن</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="شماره تلفن"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Button type="submit" className="w-100" disabled={loading}>
+                      {loading ? "در حال ارسال..." : "ثبت نام"}
+                    </Button>
+                  </Form>
+                )}
+                {step === 2 && (
+                  <Form onSubmit={handleVerifyOtp}>
+                    <Form.Group className="my-4">
+                      <Form.Label>کد تایید</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="123456"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Button type="submit" className="w-100" disabled={loading}>
+                      {loading ? "در حال تایید..." : "تایید کد"}
+                    </Button>
+                  </Form>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
 
-export default AccountSettings;
+export default Register;

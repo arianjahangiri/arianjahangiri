@@ -21,6 +21,7 @@ export const authOptions = {
         const otp = await Otp.findOne({ phone, code });
         if (!otp || otp.expiresAt < new Date()) {
           throw new Error("کد نا معتبر است یا منقضی شده است");
+          
         }
 
         const user = await users.findOne({ phone });
