@@ -24,6 +24,7 @@ import Link from "next/link";
 import LogoutButton from "@/app/commponent/auth/LogoutButton";
 import { useCart } from "@/app/context/cartContext";
 import { useRouter } from "next/router";
+import SearchBar from "@/app/componentSearchBar/search";
 
 const Header = () => {
 
@@ -98,53 +99,7 @@ const Header = () => {
         </div>
 
         {/* نوار جستجو */}
-        <motion.div className="hidden md:flex flex-1 justify-center mx-4" layout>
-          <div className={`relative w-full max-w-md transition-all duration-300 ease-in-out ${
-            searchFocused 
-              ? "ring-2 ring-blue-500 shadow-lg" 
-              : "ring-1 shadow-md bg-white ring-gray-200"
-          } rounded-full`}>
-            {/* Search Icon */}
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <FaSearch className={`h-5 w-5 transition-colors ${
-                searchFocused ? "text-blue-500" : "text-gray-400"
-              }`} />
-            </div>
-            
-            {/* Input Field */}
-          <input
-      type="text"
-      placeholder="جستجو محصولات..."
-      value={searchQuerys}
-      onChange={(e) => setSearchQuerys(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && searchQuerys.trim()) {
-          router.push(`/search?q=${encodeURIComponent(searchQuerys)}`);
-          setSearchQuerys("");
-        }
-      }}
-      className="border rounded px-3 py-2 w-full"
-    />
-            
-            {/* Clear Button */}
-            {searchQuery && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 p-1 transition-colors text-gray-400 hover:text-gray-600"
-                onClick={() => setSearchQuery("")}
-                aria-label="پاک کردن جستجو"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </motion.button>
-            )}
-          </div>
-        </motion.div>
+    <SearchBar/>
 
         {/* آیکون‌ها و پروفایل */}
         <div className="flex items-center gap-4">
