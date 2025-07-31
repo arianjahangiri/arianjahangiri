@@ -3,9 +3,10 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getSearchResults } from "./lib/getSearchResults";
-import ProductCard from "../component/ProductCard";
-
+ 
+import ProductCard from "../component/home/ProductCard";
+import { getSearchResults } from "../home/lib/searchbar/route";
+ 
 const SearchPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
