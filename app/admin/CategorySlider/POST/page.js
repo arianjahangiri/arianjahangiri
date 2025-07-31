@@ -61,7 +61,7 @@ const Page = () => {
   
     {/* دکمه افزودن پست جدید */}
     <div className="mb-3 d-flex justify-content-end">
-      <Link href="/admin/AdsSection/add" className="btn btn-warning d-flex align-items-center justify-content-center" style={{ width: "40px", height: "40px" }}>
+      <Link href="/admin/CategorySlider/add" className="btn btn-warning d-flex align-items-center justify-content-center" style={{ width: "40px", height: "40px" }}>
         <FaPlus />
       </Link>
     </div>

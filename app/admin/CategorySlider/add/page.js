@@ -54,7 +54,7 @@ const AddImages = () => {
       }
 
       if (!response.ok) throw new Error("مشکلی در ساخت محصول پیش آمده است");
-      router.push("/");  // هدایت به صفحه اصلی پس از موفقیت
+      router.push("/admin/CategorySlider/POST");  // هدایت به صفحه اصلی پس از موفقیت
     } catch (error) {
       setError(error.message);
     }
