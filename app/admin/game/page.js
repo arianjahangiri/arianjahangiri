@@ -1,88 +1,156 @@
-// بازی پیشرفته فکری با React - بازی مسیر پنهان (Path Finder)
-// بازیکن باید با کلیک روی سلول‌ها، یک مسیر درست از شروع تا پایان را پیدا کند
-
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
- 
+import React, { useState, useEffect } from "react";
 
-const GRID_SIZE = 5;
-const createGrid = () => Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill("?"));
+const HUMAN = "X";
+const AI = "O";
 
-const generatePath = () => {
-  let path = [[0, 0]];
-  let [x, y] = [0, 0];
+const WINNING_COMBOS = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8], // ردیف‌ها
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8], // ستون‌ها
+  [0, 4, 8],
+  [2, 4, 6], // قطرها
+];
 
-  while (x !== GRID_SIZE - 1 || y !== GRID_SIZE - 1) {
-    const move = Math.random() < 0.5 ? "RIGHT" : "DOWN";
-    if (move === "RIGHT" && y < GRID_SIZE - 1) y++;
-    else if (move === "DOWN" && x < GRID_SIZE - 1) x++;
-    path.push([x, y]);
+// تابع بررسی برنده
+function checkWinner(board, player) {
+  return WINNING_COMBOS.some(combo =>
+    combo.every(index => board[index] === player)
+  );
+}
+
+// تابع بررسی تساوی
+function isTie(board) {
+  return board.every(cell => cell !== null);
+}
+
+// الگوریتم مینی‌مکس برای بهترین حرکت AI
+function minimax(newBoard, player) {
+  const availSpots = newBoard.reduce((acc, val, idx) => {
+    if (val === null) acc.push(idx);
+    return acc;
+  }, []);
+
+  if (checkWinner(newBoard, HUMAN)) {
+    return { score: -10 };
+  } else if (checkWinner(newBoard, AI)) {
+    return { score: 10 };
+  } else if (availSpots.length === 0) {
+    return { score: 0 };
   }
 
-  return path;
-};
+  const moves = [];
 
-export default function AdvancedMemoryGame() {
-  const [grid, setGrid] = useState(createGrid());
-  const [path, setPath] = useState([]);
-  const [selected, setSelected] = useState([]);
+  for (let i = 0; i < availSpots.length; i++) {
+    const move = {};
+    move.index = availSpots[i];
+    newBoard[availSpots[i]] = player;
+
+    if (player === AI) {
+      const result = minimax(newBoard, HUMAN);
+      move.score = result.score;
+    } else {
+      const result = minimax(newBoard, AI);
+      move.score = result.score;
+    }
+
+    newBoard[availSpots[i]] = null;
+    moves.push(move);
+  }
+
+  let bestMove;
+  if (player === AI) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < moves.length; i++) {
+      if (moves[i].score > bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < moves.length; i++) {
+      if (moves[i].score < bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }
+
+  return moves[bestMove];
+}
+
+export default function TicTacToeHard() {
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [isHumanTurn, setIsHumanTurn] = useState(true);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const generated = generatePath();
-    setPath(generated);
-  }, []);
+    if (!isHumanTurn) {
+      const bestMove = minimax(board.slice(), AI);
+      if (bestMove && bestMove.index !== undefined) {
+        const newBoard = [...board];
+        newBoard[bestMove.index] = AI;
+        setBoard(newBoard);
+        setIsHumanTurn(true);
 
-  const handleClick = (row, col) => {
-    const current = [...selected, [row, col]];
-    setSelected(current);
+        if (checkWinner(newBoard, AI)) {
+          setMessage("کامپیوتر برنده شد! 😢");
+        } else if (isTie(newBoard)) {
+          setMessage("بازی مساوی شد!");
+        }
+      }
+    }
+  }, [isHumanTurn, board]);
 
-    const isCorrect = path[current.length - 1]?.[0] === row && path[current.length - 1]?.[1] === col;
-    if (!isCorrect) {
-      setMessage("مسیر اشتباه بود! دوباره تلاش کن.");
-      setSelected([]);
-    } else if (row === GRID_SIZE - 1 && col === GRID_SIZE - 1) {
-      setMessage("تبریک! مسیر درست را پیدا کردی 🎉");
+  const handleClick = (index) => {
+    if (board[index] || message) return;
+
+    const newBoard = [...board];
+    newBoard[index] = HUMAN;
+    setBoard(newBoard);
+
+    if (checkWinner(newBoard, HUMAN)) {
+      setMessage("تبریک! شما برنده شدید 🎉");
+    } else if (isTie(newBoard)) {
+      setMessage("بازی مساوی شد!");
+    } else {
+      setIsHumanTurn(false);
     }
   };
 
-  const handleReset = () => {
-    setGrid(createGrid());
-    setSelected([]);
-    setPath(generatePath());
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
     setMessage("");
+    setIsHumanTurn(true);
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">🧠 بازی مسیر پنهان</h2>
-      <div className="grid grid-cols-5 gap-2">
-        {grid.map((row, rowIndex) =>
-          row.map((_, colIndex) => {
-            const isSelected = selected.some(
-              ([r, c]) => r === rowIndex && c === colIndex
-            );
-            return (
-              <Button
-                key={`${rowIndex}-${colIndex}`}
-                onClick={() => handleClick(rowIndex, colIndex)}
-                variant="outline"
-                className={`h-12 w-12 ${isSelected ? "bg-green-500 text-white" : ""}`}
-              >
-                {isSelected ? "✔️" : "?"}
-              </Button>
-            );
-          })
-        )}
+    <div className="max-w-sm mx-auto p-4 text-center">
+      <h2 className="text-2xl font-bold mb-4">بازی دوز سخت 🎯</h2>
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        {board.map((cell, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleClick(idx)}
+            className="w-20 h-20 border text-3xl font-bold rounded hover:bg-gray-100"
+            disabled={!!cell || !!message}
+          >
+            {cell}
+          </button>
+        ))}
       </div>
-      {message && <div className="mt-4 text-center text-lg font-semibold">{message}</div>}
-      <div className="text-center mt-4">
-        <Button onClick={handleReset} variant="secondary">
-          شروع مجدد بازی 🔄
-        </Button>
-      </div>
+      {message && <div className="mb-4 text-lg font-semibold">{message}</div>}
+      <button
+        onClick={resetGame}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        شروع مجدد بازی
+      </button>
     </div>
   );
 }
