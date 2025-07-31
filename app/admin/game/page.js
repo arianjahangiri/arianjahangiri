@@ -4,7 +4,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "react-bootstrap";
+ 
 
 const GRID_SIZE = 5;
 const createGrid = () => Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill("?"));
