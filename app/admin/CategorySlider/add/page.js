@@ -43,7 +43,7 @@ const AddImage = () => {
       formData.append("imageUrl", image);
 
       // ارسال داده‌ها به API
-      const response = await fetch("https://arianjahangiri.vercel.app/CategorySlider", {
+      const response = await fetch("https://arianjahangiri.vercel.app/api/CategorySlider", {
         method: "POST",
         body: formData,
       });
