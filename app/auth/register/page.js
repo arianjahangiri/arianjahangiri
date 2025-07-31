@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import {
@@ -11,40 +11,27 @@ import {
   Form,
   Row,
 } from "react-bootstrap";
-
+ 
+ 
 const Register = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [Image_profile, setImage_profile] = useState(null);
-
+  const [ Image_profile, setImage_profile] = useState("");
+ 
+ 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const router = useRouter();
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  // مرحله اول: ارسال داده‌ها + تصویر برای دریافت OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!Image_profile) {
-      setError("تصویر پروفایل را انتخاب کنید.");
-      return;
-    }
-
     if (!name || name.trim().length < 3 || name.trim().length > 30) {
       setError("نام و نام خانوادگی باید بین 3 تا 30 کاراکتر باشد.");
-      return;
-    }
-
-    if (!email || !emailRegex.test(email)) {
-      setError("ایمیل وارد شده معتبر نیست.");
       return;
     }
 
@@ -57,20 +44,15 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("phone", phone);
-      formData.append("email", email);
-      formData.append("type", "register");
-      formData.append("Image_profile", Image_profile);
-
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, phone, type: "register" }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.message || "خطایی سمت سرور رخ داده است.");
       } else {
@@ -84,55 +66,48 @@ const Register = () => {
     }
   };
 
-  // مرحله دوم: تایید OTP به همراه تصویر
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+const handleVerifyOtp = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
 
-    if (!otp || otp.length !== 6) {
-      setError("کد تایید باید 6 رقمی باشد.");
-      return;
+  if (!otp || otp.length !== 6) {
+    setError("کد تایید باید 6 رقمی باشد.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("phone", phone);
+  formData.append("code", otp);
+  formData.append("Image_profile", Image_profile);
+
+  setLoading(true);
+
+  try {
+    const res = await fetch("/api/auth/verify-otp", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.message || "خطا در ثبت‌نام");
+    } else {
+      setSuccess("ثبت‌نام موفقیت‌آمیز بود");
+      router.push("/");
     }
+  } catch (err) {
+    setError("خطایی رخ داد");
+  } finally {
+    setLoading(false);
+  }
+};
 
-    if (!Image_profile) {
-      setError("تصویر پروفایل را انتخاب کنید.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("phone", phone);
-      formData.append("email", email);
-      formData.append("code", otp);
-      formData.append("Image_profile", Image_profile);
-
-      const res = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "خطا در ثبت‌نام");
-      } else {
-        setSuccess("ثبت‌نام موفقیت‌آمیز بود");
-        router.push("/");
-      }
-    } catch (err) {
-      setError("خطایی رخ داد");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="w-full" style={{ backgroundColor: "#f9f9f9" }}>
-      <Container className="d-flex justify-content-center align-items-center w-full" style={{ minHeight: "100vh" }}>
+      <Container className="d-flex justify-content-center align-items-center w-full">
         <Row className="w-full d-flex justify-content-center align-items-center">
           <Col md={6} lg={4}>
             <Card
@@ -148,18 +123,16 @@ const Register = () => {
                 </h2>
                 {error && <Alert variant="danger">{error}</Alert>}
                 {success && <Alert variant="success">{success}</Alert>}
-
                 {step === 1 && (
-                  <Form onSubmit={handleSendOtp} encType="multipart/form-data">
-                    <Form.Group className="mb-3">
-                      <Form.Label>تصویر پروفایل</Form.Label>
-                      <Form.Control
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setImage_profile(e.target.files[0])}
-                      />
-                    </Form.Group>
-
+                  <Form onSubmit={handleSendOtp}>
+                     <Form.Group className="mb-3">
+                                    <Form.Label>تصویر</Form.Label>
+                                    <Form.Control
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) => setImage_profile(e.target.files[0])}
+                                    />
+                                  </Form.Group>
                     <Form.Group className="my-4">
                       <Form.Label>نام و نام خانوادگی</Form.Label>
                       <Form.Control
@@ -169,17 +142,6 @@ const Register = () => {
                         onChange={(e) => setName(e.target.value)}
                       />
                     </Form.Group>
-
-                    <Form.Group className="my-4">
-                      <Form.Label>ایمیل</Form.Label>
-                      <Form.Control
-                        type="email"
-                        placeholder="ایمیل"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </Form.Group>
-
                     <Form.Group className="my-4">
                       <Form.Label>شماره تلفن</Form.Label>
                       <Form.Control
@@ -189,15 +151,13 @@ const Register = () => {
                         onChange={(e) => setPhone(e.target.value)}
                       />
                     </Form.Group>
-
                     <Button type="submit" className="w-100" disabled={loading}>
                       {loading ? "در حال ارسال..." : "ثبت نام"}
                     </Button>
                   </Form>
                 )}
-
                 {step === 2 && (
-                  <Form onSubmit={handleVerifyOtp} encType="multipart/form-data">
+                  <Form onSubmit={handleVerifyOtp}>
                     <Form.Group className="my-4">
                       <Form.Label>کد تایید</Form.Label>
                       <Form.Control

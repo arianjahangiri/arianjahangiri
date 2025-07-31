@@ -13,34 +13,27 @@ import {
 import NoAuthWrapper from "@/app/commponent/auth/NoAuthWrapper";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+ 
+ 
+ 
+ 
 
 const Login = () => {
-  const [identifier, setIdentifier] = useState(""); // شماره یا ایمیل
+  const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const router = useRouter();
-
-  const isEmail = (value) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
-  const isPhone = (value) =>
-    /^(\+98|0)?9\d{9}$/.test(value);
-
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!identifier) {
-      setError("لطفا شماره موبایل یا ایمیل را وارد کنید.");
-      return;
-    }
-
-    if (!isEmail(identifier) && !isPhone(identifier)) {
-      setError("شماره موبایل یا ایمیل وارد شده معتبر نیست.");
+    const phoneRegex = /^(\+98|0)?9\d{9}$/;
+    if (!phone || !phoneRegex.test(phone)) {
+      setError("شماره تلفن وارد شده صحیح نیست.");
       return;
     }
 
@@ -52,10 +45,7 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          type: isEmail(identifier) ? "email" : "phone",
-          identifier,
-        }),
+        body: JSON.stringify({ phone, type: "login" }),
       });
 
       const data = await res.json();
@@ -84,23 +74,17 @@ const Login = () => {
 
     setLoading(true);
 
-    const signInData = {
+    const result = await signIn("credentials", {
+      phone,
       code: otp,
       redirect: false,
-    };
-    if (isEmail(identifier)) {
-      signInData.email = identifier;
-    } else {
-      signInData.phone = identifier;
-    }
-
-    const result = await signIn("credentials", signInData);
+    });
 
     if (!result.ok) {
       setError(result.error || "خطایی رخ داده است.");
     } else {
       setSuccess("ورود موفقیت آمیز بود.");
-      router.push("/");
+      router.push("/")
     }
 
     setLoading(false);
@@ -128,12 +112,12 @@ const Login = () => {
                   {step === 1 && (
                     <Form onSubmit={handleSendOtp}>
                       <Form.Group className="my-4">
-                        <Form.Label>شماره موبایل یا ایمیل</Form.Label>
+                        <Form.Label>شماره</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="شماره موبایل یا ایمیل"
-                          value={identifier}
-                          onChange={(e) => setIdentifier(e.target.value.trim())}
+                          placeholder="شماره"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
                         />
                       </Form.Group>
                       <Button
@@ -141,7 +125,7 @@ const Login = () => {
                         className="w-100"
                         disabled={loading}
                       >
-                        {loading ? "در حال ارسال..." : "ارسال کد تایید"}
+                        {loading ? "در حال ارسال..." : "ورود"}
                       </Button>
                     </Form>
                   )}
@@ -168,9 +152,7 @@ const Login = () => {
                   )}
                 </Card.Body>
               </Card>
-              <p>
-                قبلا ثبت نام نکرده اید : <Link href={"/auth/register"}>ثبت نام</Link>
-              </p>
+              <p>قبلا ثبت نام نکرده اید    : <Link href={"/auth/register"}> ثبت نام </Link></p>
             </Col>
           </Row>
         </Container>
