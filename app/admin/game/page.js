@@ -72,7 +72,7 @@ function minimax(newBoard, player) {
   }
 
   // 🔥 40% احتمال انتخاب حرکت غیر بهینه برای قابل شکست بودن AI
-  const makeMistake = Math.random() < 0.2;
+  const makeMistake = Math.random() < 0.1;
   if (makeMistake && moves.length > 1) {
     const otherMoves = moves.filter((_, idx) => idx !== bestMove);
     return otherMoves[Math.floor(Math.random() * otherMoves.length)];
