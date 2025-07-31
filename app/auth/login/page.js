@@ -147,7 +147,16 @@ const Login = () => {
                         disabled={loading}
                       >
                         {loading ? "در حال تایید..." : "تایید کد"}
-                      </Button>
+                      </Button> {error === "کد تایید معتبر نیست" && (
+  <Button
+    type="button"
+    className="w-100 mt-2"
+    onClick={handleSendOtp}
+    disabled={loading}
+  >
+    {loading ? "در حال ارسال..." : "ارسال دوباره کد"}
+  </Button>
+)}
                     </Form>
                   )}
                 </Card.Body>
