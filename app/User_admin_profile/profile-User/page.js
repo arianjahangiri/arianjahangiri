@@ -1,206 +1,153 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import {
-  Alert,
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 
-const Register = () => {
+const EditUser = ({ id }) => {
+  const [data, setData] = useState({});
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState(""); // اضافه شده ایمیل
-  const [Image_profile, setImage_profile] = useState(null);
-
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState(""); // فقط نمایش
+  const [status, setStatus] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [step, setStep] = useState(1);
-  const router = useRouter();
+  const [message, setMessage] = useState("");
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // بارگذاری اطلاعات کاربر
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`https://arianjahangiri.vercel.app/api/User/${id}`);
+        if (!res.ok) throw new Error("خطا در بارگذاری اطلاعات کاربر");
 
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    if (!name || name.trim().length < 3 || name.trim().length > 30) {
-      setError("نام و نام خانوادگی باید بین 3 تا 30 کاراکتر باشد.");
-      return;
-    }
-
-    if (!email || !emailRegex.test(email)) {
-      setError("ایمیل وارد شده معتبر نیست.");
-      return;
-    }
-
-    const phoneRegex = /^(\+98|0)?9\d{9}$/;
-    if (!phone || !phoneRegex.test(phone)) {
-      setError("شماره تلفن وارد شده صحیح نیست.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/send-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, phone, email, type: "register" }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message || "خطایی سمت سرور رخ داده است.");
-      } else {
-        setSuccess("کد تایید برای شما ارسال شد.");
-        setStep(2);
+        const jsonData = await res.json();
+        setData(jsonData);
+        setName(jsonData.name || "");
+        setEmail(jsonData.email || "");
+        setPhone(jsonData.phone || ""); // فقط برای نمایش
+        setStatus(jsonData.status || false);
+        setImageUrl(jsonData.image || "");
+      } catch (error) {
+        console.error(error.message);
+        setMessage("خطا در بارگذاری اطلاعات");
       }
-    } catch (error) {
-      setError("خطایی رخ داده است.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const handleVerifyOtp = async (e) => {
+    if (id) fetchData();
+  }, [id]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    if (!otp || otp.length !== 6) {
-      setError("کد تایید باید 6 رقمی باشد.");
-      return;
-    }
-
-    if (!Image_profile) {
-      setError("تصویر پروفایل را انتخاب کنید.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("phone", phone);
-    formData.append("email", email); // اضافه شده ایمیل به فرم دیتا
-    formData.append("code", otp);
-    formData.append("Image_profile", Image_profile);
-
     setLoading(true);
+    setMessage("");
 
     try {
-      const res = await fetch("/api/auth/verify-otp", {
-        method: "POST",
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("status", status);
+      if (file) {
+        formData.append("image", file);
+      }
+
+      const res = await fetch(`/api/User/${id}`, {
+        method: "PUT",
         body: formData,
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message || "خطا در ثبت‌نام");
-      } else {
-        setSuccess("ثبت‌نام موفقیت‌آمیز بود");
-        router.push("/");
-      }
-    } catch (err) {
-      setError("خطایی رخ داد");
+      if (!res.ok) throw new Error("خطا در بروزرسانی اطلاعات");
+
+      setMessage("اطلاعات با موفقیت بروزرسانی شد");
+    } catch (error) {
+      console.error(error);
+      setMessage("خطا در بروزرسانی اطلاعات");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full" style={{ backgroundColor: "#f9f9f9" }}>
-      <Container className="d-flex justify-content-center align-items-center w-full">
-        <Row className="w-full d-flex justify-content-center align-items-center">
-          <Col md={6} lg={4}>
-            <Card
-              className="shadow py-3"
-              style={{ borderRadius: "10px", border: "none" }}
-            >
-              <Card.Body>
-                <h2
-                  className="text-center mb-4 fw-bolder"
-                  style={{ color: "#212529" }}
-                >
-                  ثبت نام در سیستم
-                </h2>
-                {error && <Alert variant="danger">{error}</Alert>}
-                {success && <Alert variant="success">{success}</Alert>}
-                {step === 1 && (
-                  <Form onSubmit={handleSendOtp}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>تصویر</Form.Label>
-                      <Form.Control
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setImage_profile(e.target.files[0])}
-                      />
-                    </Form.Group>
-                    <Form.Group className="my-4">
-                      <Form.Label>نام و نام خانوادگی</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="نام و نام خانوادگی"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </Form.Group>
-                    <Form.Group className="my-4">
-                      <Form.Label>ایمیل</Form.Label>
-                      <Form.Control
-                        type="email"
-                        placeholder="ایمیل"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </Form.Group>
-                    <Form.Group className="my-4">
-                      <Form.Label>شماره تلفن</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="شماره تلفن"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                      />
-                    </Form.Group>
-                    <Button type="submit" className="w-100" disabled={loading}>
-                      {loading ? "در حال ارسال..." : "ثبت نام"}
-                    </Button>
-                  </Form>
-                )}
-                {step === 2 && (
-                  <Form onSubmit={handleVerifyOtp}>
-                    <Form.Group className="my-4">
-                      <Form.Label>کد تایید</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="123456"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                      />
-                    </Form.Group>
+    <div className="max-w-md mx-auto bg-white shadow-md rounded-xl p-6 mt-10">
+      <h2 className="text-xl font-bold mb-4 text-center">ویرایش اطلاعات کاربر</h2>
 
-                    <Button type="submit" className="w-100" disabled={loading}>
-                      {loading ? "در حال تایید..." : "تایید کد"}
-                    </Button>
-                  </Form>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+      {message && (
+        <p className={`mb-4 text-center ${message.includes("خطا") ? "text-red-500" : "text-green-600"}`}>
+          {message}
+        </p>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block font-medium">نام:</label>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 mt-1"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium">ایمیل:</label>
+          <input
+            type="email"
+            className="w-full border rounded px-3 py-2 mt-1"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium">شماره تلفن:</label>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 mt-1 bg-gray-100 text-gray-700"
+            value={phone}
+            readOnly
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium">وضعیت فعال بودن:</label>
+          <input
+            type="checkbox"
+            checked={status}
+            onChange={(e) => setStatus(e.target.checked)}
+            className="mt-2"
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium">تصویر فعلی:</label>
+          {imageUrl ? (
+            <img src={imageUrl} alt="Profile" className="w-24 h-24 object-cover mt-2 rounded-full" />
+          ) : (
+            <p className="text-sm text-gray-500 mt-1">تصویری موجود نیست</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block font-medium">آپلود تصویر جدید:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="mt-2"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          disabled={loading}
+        >
+          {loading ? "در حال ارسال..." : "ذخیره تغییرات"}
+        </button>
+      </form>
     </div>
   );
 };
 
-export default Register;
+export default EditUser;
