@@ -5,7 +5,8 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
  
 import ProductCard from "../component/home/ProductCard";
-import { getSearchResults } from "../home/lib/searchbar/route";
+import { getSearchResults } from "../home/lib/searchbar/serache";
+ 
  
 const SearchPage = () => {
   const searchParams = useSearchParams();

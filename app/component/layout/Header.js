@@ -23,6 +23,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import LogoutButton from "@/app/commponent/auth/LogoutButton";
 import { useCart } from "@/app/context/cartContext";
+import { useRouter } from "next/router";
 
 const Header = () => {
 
@@ -38,7 +39,7 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { cart } = useCart();
   const totalItems = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-
+ const router =useRouter()
   useEffect(() => {
     const fetchCategories = async () => {
       try {
