@@ -1,5 +1,4 @@
  
-import connect from "@/app/utils/db";
 import { join } from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
@@ -7,6 +6,7 @@ import { NextResponse } from "next/server";
  
 import CategorySlider from "@/app/modls/CategorySlider/CategorySlider";
 import { put } from "@vercel/blob";
+import connect from "@/app/utils/db";
  
  
  
