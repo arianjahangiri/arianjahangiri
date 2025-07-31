@@ -1,63 +1,225 @@
-import Otp from "@/app/modls/Otp/Otp";
-import users from "@/app/modls/User/users";
-import connect from "@/app/utils/db";
-import { put } from "@vercel/blob";
-import { NextResponse } from "next/server";
+"use client";
 
-const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+} from "react-bootstrap";
 
-export async function POST(req) {
-  try {
-    await connect();
+const Register = () => {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [Image_profile, setImage_profile] = useState(null);
 
-    const data = await req.formData();
-    const name = data.get("name");
-    const phone = data.get("phone");
-    const email = data.get("email");
-    const code = data.get("code");
-    const file = data.get("Image_profile");
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [step, setStep] = useState(1);
+  const router = useRouter();
 
-    if (!name || !phone ||!email || !code || !file || typeof file === "string") {
-      return NextResponse.json(
-        { message: "همه فیلدها و تصویر الزامی هستند" },
-        { status: 400 }
-      );
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // مرحله اول: ارسال داده‌ها + تصویر برای دریافت OTP
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!Image_profile) {
+      setError("تصویر پروفایل را انتخاب کنید.");
+      return;
     }
 
-    const otp = await Otp.findOne({ phone, code });
-    if (!otp || otp.expiresAt < new Date()) {
-      return NextResponse.json({ message: "کد تایید معتبر نیست" }, { status: 400 });
+    if (!name || name.trim().length < 3 || name.trim().length > 30) {
+      setError("نام و نام خانوادگی باید بین 3 تا 30 کاراکتر باشد.");
+      return;
     }
 
-    // تبدیل فایل به Buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
+    if (!email || !emailRegex.test(email)) {
+      setError("ایمیل وارد شده معتبر نیست.");
+      return;
+    }
 
-    // آپلود تصویر روی Vercel Blob
-    const blob = await put(`profile_images/${Date.now()}-${file.name}`, buffer, {
-      access: "public",
-      contentType: file.type,
-      token: BLOB_TOKEN,
-    });
+    const phoneRegex = /^(\+98|0)?9\d{9}$/;
+    if (!phone || !phoneRegex.test(phone)) {
+      setError("شماره تلفن وارد شده صحیح نیست.");
+      return;
+    }
 
-    // ساخت یوزر
-    const newUser = await users.create({
-      name,
-      email,
-      phone,
-      Image_profile: blob.url, // لینک آنلاین تصویر
-      isAdmin: false,
-      isActive: true,
-    });
+    setLoading(true);
 
-    // حذف OTP بعد از استفاده
-    await Otp.deleteOne({ phone });
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("email", email);
+      formData.append("type", "register");
+      formData.append("Image_profile", Image_profile);
 
-    return NextResponse.json(
-      { message: "ثبت نام موفق بود", user: newUser },
-      { status: 201 }
-    );
-  } catch (err) {
-    console.error("POST error:", err);
-    return NextResponse.json({ message: err.message || "خطا در سرور" }, { status: 500 });
-  }
-}
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "خطایی سمت سرور رخ داده است.");
+      } else {
+        setSuccess("کد تایید برای شما ارسال شد.");
+        setStep(2);
+      }
+    } catch (error) {
+      setError("خطایی رخ داده است.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // مرحله دوم: تایید OTP به همراه تصویر
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!otp || otp.length !== 6) {
+      setError("کد تایید باید 6 رقمی باشد.");
+      return;
+    }
+
+    if (!Image_profile) {
+      setError("تصویر پروفایل را انتخاب کنید.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("email", email);
+      formData.append("code", otp);
+      formData.append("Image_profile", Image_profile);
+
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "خطا در ثبت‌نام");
+      } else {
+        setSuccess("ثبت‌نام موفقیت‌آمیز بود");
+        router.push("/");
+      }
+    } catch (err) {
+      setError("خطایی رخ داد");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full" style={{ backgroundColor: "#f9f9f9" }}>
+      <Container className="d-flex justify-content-center align-items-center w-full" style={{ minHeight: "100vh" }}>
+        <Row className="w-full d-flex justify-content-center align-items-center">
+          <Col md={6} lg={4}>
+            <Card
+              className="shadow py-3"
+              style={{ borderRadius: "10px", border: "none" }}
+            >
+              <Card.Body>
+                <h2
+                  className="text-center mb-4 fw-bolder"
+                  style={{ color: "#212529" }}
+                >
+                  ثبت نام در سیستم
+                </h2>
+                {error && <Alert variant="danger">{error}</Alert>}
+                {success && <Alert variant="success">{success}</Alert>}
+
+                {step === 1 && (
+                  <Form onSubmit={handleSendOtp} encType="multipart/form-data">
+                    <Form.Group className="mb-3">
+                      <Form.Label>تصویر پروفایل</Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImage_profile(e.target.files[0])}
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="my-4">
+                      <Form.Label>نام و نام خانوادگی</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="نام و نام خانوادگی"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="my-4">
+                      <Form.Label>ایمیل</Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="ایمیل"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="my-4">
+                      <Form.Label>شماره تلفن</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="شماره تلفن"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Button type="submit" className="w-100" disabled={loading}>
+                      {loading ? "در حال ارسال..." : "ثبت نام"}
+                    </Button>
+                  </Form>
+                )}
+
+                {step === 2 && (
+                  <Form onSubmit={handleVerifyOtp} encType="multipart/form-data">
+                    <Form.Group className="my-4">
+                      <Form.Label>کد تایید</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="123456"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Button type="submit" className="w-100" disabled={loading}>
+                      {loading ? "در حال تایید..." : "تایید کد"}
+                    </Button>
+                  </Form>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default Register;
