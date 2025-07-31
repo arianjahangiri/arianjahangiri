@@ -25,6 +25,9 @@ import LogoutButton from "@/app/commponent/auth/LogoutButton";
 import { useCart } from "@/app/context/cartContext";
 
 const Header = () => {
+
+
+    const [searchQuerys, setSearchQuerys] = useState("");
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -108,15 +111,19 @@ const Header = () => {
             </div>
             
             {/* Input Field */}
-            <input
-              type="text"
-              placeholder="جستجو محصولات..."
-              className="w-full pr-10 pl-5 py-2.5 border-0 bg-transparent focus:outline-none rounded-full placeholder-gray-400 text-gray-700"
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <input
+      type="text"
+      placeholder="جستجو محصولات..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuerys(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && searchQuery.trim()) {
+          router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+          setSearchQuery("");
+        }
+      }}
+      className="border rounded px-3 py-2 w-full"
+    />
             
             {/* Clear Button */}
             {searchQuery && (
