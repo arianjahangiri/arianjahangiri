@@ -18,14 +18,14 @@ const WINNING_COMBOS = [
 
 // تابع بررسی برنده
 function checkWinner(board, player) {
-  return WINNING_COMBOS.some(combo =>
-    combo.every(index => board[index] === player)
+  return WINNING_COMBOS.some((combo) =>
+    combo.every((index) => board[index] === player)
   );
 }
 
 // تابع بررسی تساوی
 function isTie(board) {
-  return board.every(cell => cell !== null);
+  return board.every((cell) => cell !== null);
 }
 
 // الگوریتم مینی‌مکس برای بهترین حرکت AI
@@ -137,8 +137,8 @@ export default function TicTacToeHard() {
           <button
             key={idx}
             onClick={() => handleClick(idx)}
-            className="w-20 h-20 border text-3xl font-bold rounded hover:bg-gray-100"
             disabled={!!cell || !!message}
+            className="w-20 h-20 border rounded flex items-center justify-center text-5xl font-bold hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
           >
             {cell}
           </button>
@@ -151,6 +151,122 @@ export default function TicTacToeHard() {
       >
         شروع مجدد بازی
       </button>
+    </div>
+  );
+}
+function JumpingCarGame() {
+  const [carBottom, setCarBottom] = useState(0); // ارتفاع ماشین از پایین (0 یا 1 برای پریدن)
+  const [obstacleLeft, setObstacleLeft] = useState(100); // موقعیت مانع (از راست به چپ)
+  const [isJumping, setIsJumping] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const gameAreaRef = useRef(null);
+
+  // کنترل پرش ماشین
+  const jump = () => {
+    if (isJumping || gameOver) return;
+    setIsJumping(true);
+    setCarBottom(50); // ارتفاع پریدن (مثلاً 50px)
+    setTimeout(() => {
+      setCarBottom(0);
+      setIsJumping(false);
+    }, 500);
+  };
+
+  // حرکت مانع به سمت چپ و بررسی برخورد
+  useEffect(() => {
+    if (gameOver) return;
+
+    const timerId = setInterval(() => {
+      setObstacleLeft((prev) => {
+        if (prev <= 0) return 100; // مانع به ابتدا برمیگردد
+        return prev - 5;
+      });
+    }, 50);
+
+    return () => clearInterval(timerId);
+  }, [gameOver]);
+
+  // چک برخورد مانع با ماشین
+  useEffect(() => {
+    if (
+      obstacleLeft > 0 &&
+      obstacleLeft < 20 && // وقتی مانع نزدیک ماشین است
+      carBottom < 40 // و ماشین در ارتفاع پایین است (پریدن نکرده)
+    ) {
+      setGameOver(true);
+    }
+  }, [obstacleLeft, carBottom]);
+
+  // کنترل دکمه space یا کلیک برای پرش
+  useEffect(() => {
+    const handleKeyUp = (e) => {
+      if (e.code === "Space") jump();
+    };
+    window.addEventListener("keyup", handleKeyUp);
+    return () => window.removeEventListener("keyup", handleKeyUp);
+  }, [isJumping, gameOver]);
+
+  return (
+    <div
+      ref={gameAreaRef}
+      className="relative w-64 h-32 bg-blue-200 border border-gray-500 rounded overflow-hidden mx-auto mt-8"
+      onClick={jump}
+      style={{ cursor: "pointer" }}
+    >
+      {/* ماشین */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: carBottom,
+          left: 20,
+          width: 30,
+          height: 30,
+          backgroundColor: "red",
+          borderRadius: 5,
+          transition: "bottom 0.3s",
+        }}
+      ></div>
+
+      {/* مانع */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: `${obstacleLeft}%`,
+          width: 20,
+          height: 20,
+          backgroundColor: "black",
+          borderRadius: 3,
+          transition: "left 0.05s linear",
+        }}
+      ></div>
+
+      {gameOver && (
+        <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center text-red-700 font-bold text-lg">
+          بازی تمام شد! <br />
+          برای شروع دوباره کلیک کنید
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setGameOver(false);
+              setObstacleLeft(100);
+              setCarBottom(0);
+            }}
+            className="mt-2 px-3 py-1 bg-red-500 text-white rounded"
+          >
+            شروع مجدد
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function MainGame() {
+  return (
+    <div className="p-6 space-y-8">
+      <TicTacToeHard />
+      <JumpingCarGame />
     </div>
   );
 }
