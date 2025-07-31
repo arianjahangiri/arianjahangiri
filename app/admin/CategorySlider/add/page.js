@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 
-const AddImage = () => {
+const AddImages = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState("");
@@ -110,4 +110,4 @@ const AddImage = () => {
   );
 };
 
-export default AddImage;
+export default AddImages;
