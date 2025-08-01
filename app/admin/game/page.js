@@ -5,38 +5,35 @@ import React, { useState, useEffect } from "react";
 const HUMAN = "X";
 const AI = "O";
 
-const BOARD_SIZE = 5;
-const WIN_LENGTH = 4;
+const SIZE = 5; // تعداد خانه‌ها در هر ردیف/ستون
+const WIN_LENGTH = 4; // طول ترکیب برنده
 
-function generateWinningCombos(size, winLength) {
-  const combos = [];
+function generateBoard(size) {
+  return Array(size * size).fill(null);
+}
 
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < size; col++) {
-      if (col + winLength <= size) {
-        combos.push(Array.from({ length: winLength }, (_, i) => row * size + col + i));
-      }
-      if (row + winLength <= size) {
-        combos.push(Array.from({ length: winLength }, (_, i) => (row + i) * size + col));
-      }
-      if (row + winLength <= size && col + winLength <= size) {
-        combos.push(Array.from({ length: winLength }, (_, i) => (row + i) * size + col + i));
-      }
-      if (row + winLength <= size && col - winLength + 1 >= 0) {
-        combos.push(Array.from({ length: winLength }, (_, i) => (row + i) * size + col - i));
-      }
+function checkWinner(board, player) {
+  const checkLine = (start, step) => {
+    let count = 0;
+    for (let i = 0; i < WIN_LENGTH; i++) {
+      if (board[start + i * step] === player) count++;
+      else break;
+    }
+    return count === WIN_LENGTH;
+  };
+
+  for (let row = 0; row < SIZE; row++) {
+    for (let col = 0; col < SIZE; col++) {
+      const idx = row * SIZE + col;
+
+      if (col <= SIZE - WIN_LENGTH && checkLine(idx, 1)) return true; // افقی
+      if (row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE)) return true; // عمودی
+      if (col <= SIZE - WIN_LENGTH && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE + 1)) return true; // قطر اصلی
+      if (col >= WIN_LENGTH - 1 && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE - 1)) return true; // قطر فرعی
     }
   }
 
-  return combos;
-}
-
-const WINNING_COMBOS = generateWinningCombos(BOARD_SIZE, WIN_LENGTH);
-
-function checkWinner(board, player) {
-  return WINNING_COMBOS.some((combo) =>
-    combo.every((index) => board[index] === player)
-  );
+  return false;
 }
 
 function isTie(board) {
@@ -60,11 +57,9 @@ function minimax(newBoard, player) {
     move.index = availSpots[i];
     newBoard[availSpots[i]] = player;
 
-    if (player === AI) {
-      move.score = minimax(newBoard, HUMAN).score;
-    } else {
-      move.score = minimax(newBoard, AI).score;
-    }
+    move.score = player === AI
+      ? minimax(newBoard, HUMAN).score
+      : minimax(newBoard, AI).score;
 
     newBoard[availSpots[i]] = null;
     moves.push(move);
@@ -73,34 +68,34 @@ function minimax(newBoard, player) {
   let bestMove;
   if (player === AI) {
     let bestScore = -Infinity;
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].score > bestScore) {
-        bestScore = moves[i].score;
+    moves.forEach((m, i) => {
+      if (m.score > bestScore) {
+        bestScore = m.score;
         bestMove = i;
       }
-    }
+    });
   } else {
     let bestScore = Infinity;
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].score < bestScore) {
-        bestScore = moves[i].score;
+    moves.forEach((m, i) => {
+      if (m.score < bestScore) {
+        bestScore = m.score;
         bestMove = i;
       }
-    }
+    });
   }
 
   return moves[bestMove];
 }
 
 export default function TicTacToeGame() {
-  const [board, setBoard] = useState(Array(BOARD_SIZE * BOARD_SIZE).fill(null));
+  const [board, setBoard] = useState(generateBoard(SIZE));
   const [isHumanTurn, setIsHumanTurn] = useState(true);
   const [message, setMessage] = useState("");
   const [mode, setMode] = useState("ai");
 
   useEffect(() => {
     if (mode === "ai" && !isHumanTurn && !message) {
-      const bestMove = minimax(board.slice(), AI);
+      const bestMove = minimax([...board], AI);
       if (bestMove && bestMove.index !== undefined) {
         const newBoard = [...board];
         newBoard[bestMove.index] = AI;
@@ -119,23 +114,21 @@ export default function TicTacToeGame() {
     }
   }, [isHumanTurn]);
 
+  // کد تقلب: Alt + 1 → برد بازیکن
   useEffect(() => {
-    const handleCheatCode = (e) => {
+    const handler = (e) => {
       if (e.altKey && e.key === "1") {
         const newBoard = [...board];
-        const winningCombo = WINNING_COMBOS.find((combo) =>
-          combo.every((index) => newBoard[index] === null)
-        );
-        if (winningCombo) {
-          winningCombo.forEach((index) => (newBoard[index] = HUMAN));
-          setBoard(newBoard);
-          setMessage("تقلب فعال شد! شما برنده شدید 🎉");
+        for (let i = 0; i < WIN_LENGTH; i++) {
+          newBoard[i] = HUMAN;
         }
+        setBoard(newBoard);
+        setMessage("تقلب فعال شد! شما برنده شدید 🎉");
       }
     };
 
-    window.addEventListener("keydown", handleCheatCode);
-    return () => window.removeEventListener("keydown", handleCheatCode);
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, [board]);
 
   const handleClick = (index) => {
@@ -157,7 +150,7 @@ export default function TicTacToeGame() {
   };
 
   const resetGame = () => {
-    setBoard(Array(BOARD_SIZE * BOARD_SIZE).fill(null));
+    setBoard(generateBoard(SIZE));
     setMessage("");
     setIsHumanTurn(true);
   };
@@ -168,28 +161,28 @@ export default function TicTacToeGame() {
   };
 
   return (
-    <div className="max-w-screen-sm mx-auto p-4 text-center">
-      <h2 className="text-2xl font-bold mb-4">بازی دوز پیشرفته ۵×۵ 🎮</h2>
+    <div className="max-w-xl mx-auto p-4 text-center">
+      <h2 className="text-2xl font-bold mb-4">بازی دوز ۵×۵ پیشرفته 🎮</h2>
 
       <div className="flex justify-center gap-4 mb-4">
         <button
           onClick={() => switchMode("ai")}
           className={`px-4 py-2 rounded ${mode === "ai" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
         >
-          حالت با ربات 🤖
+          با ربات 🤖
         </button>
         <button
           onClick={() => switchMode("multiplayer")}
           className={`px-4 py-2 rounded ${mode === "multiplayer" ? "bg-green-600 text-white" : "bg-gray-200"}`}
         >
-          حالت دو نفره 👥
+          دو نفره 👥
         </button>
       </div>
 
       <div
-        className={`grid gap-2 mb-4`}
+        className="grid gap-1 mb-4"
         style={{
-          gridTemplateColumns: `repeat(${BOARD_SIZE}, minmax(0, 1fr))`,
+          gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))`,
         }}
       >
         {board.map((cell, idx) => (
@@ -199,7 +192,7 @@ export default function TicTacToeGame() {
               if (mode === "ai" && !isHumanTurn) return;
               handleClick(idx);
             }}
-            className="w-full aspect-square border rounded flex items-center justify-center text-2xl font-bold hover:bg-gray-100 disabled:text-gray-400"
+            className="aspect-square border rounded flex items-center justify-center text-3xl font-bold hover:bg-gray-100 disabled:text-gray-400"
             disabled={!!cell || !!message}
           >
             {cell}
