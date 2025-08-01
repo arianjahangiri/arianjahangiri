@@ -5,16 +5,33 @@ import React, { useState, useEffect } from "react";
 const HUMAN = "X";
 const AI = "O";
 
-const WINNING_COMBOS = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
+const BOARD_SIZE = 5;
+const WIN_LENGTH = 4;
+
+function generateWinningCombos(size, winLength) {
+  const combos = [];
+
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      if (col + winLength <= size) {
+        combos.push(Array.from({ length: winLength }, (_, i) => row * size + col + i));
+      }
+      if (row + winLength <= size) {
+        combos.push(Array.from({ length: winLength }, (_, i) => (row + i) * size + col));
+      }
+      if (row + winLength <= size && col + winLength <= size) {
+        combos.push(Array.from({ length: winLength }, (_, i) => (row + i) * size + col + i));
+      }
+      if (row + winLength <= size && col - winLength + 1 >= 0) {
+        combos.push(Array.from({ length: winLength }, (_, i) => (row + i) * size + col - i));
+      }
+    }
+  }
+
+  return combos;
+}
+
+const WINNING_COMBOS = generateWinningCombos(BOARD_SIZE, WIN_LENGTH);
 
 function checkWinner(board, player) {
   return WINNING_COMBOS.some((combo) =>
@@ -76,12 +93,11 @@ function minimax(newBoard, player) {
 }
 
 export default function TicTacToeGame() {
-  const [board, setBoard] = useState(Array(9).fill(null));
+  const [board, setBoard] = useState(Array(BOARD_SIZE * BOARD_SIZE).fill(null));
   const [isHumanTurn, setIsHumanTurn] = useState(true);
   const [message, setMessage] = useState("");
   const [mode, setMode] = useState("ai");
 
-  // هوش مصنوعی حرکت می‌کند
   useEffect(() => {
     if (mode === "ai" && !isHumanTurn && !message) {
       const bestMove = minimax(board.slice(), AI);
@@ -103,7 +119,6 @@ export default function TicTacToeGame() {
     }
   }, [isHumanTurn]);
 
-  // کلید تقلب: Alt + 1 برای برنده شدن انسان
   useEffect(() => {
     const handleCheatCode = (e) => {
       if (e.altKey && e.key === "1") {
@@ -142,7 +157,7 @@ export default function TicTacToeGame() {
   };
 
   const resetGame = () => {
-    setBoard(Array(9).fill(null));
+    setBoard(Array(BOARD_SIZE * BOARD_SIZE).fill(null));
     setMessage("");
     setIsHumanTurn(true);
   };
@@ -153,8 +168,8 @@ export default function TicTacToeGame() {
   };
 
   return (
-    <div className="max-w-sm mx-auto p-4 text-center">
-      <h2 className="text-2xl font-bold mb-4">بازی دوز پیشرفته 🎮</h2>
+    <div className="max-w-screen-sm mx-auto p-4 text-center">
+      <h2 className="text-2xl font-bold mb-4">بازی دوز پیشرفته ۵×۵ 🎮</h2>
 
       <div className="flex justify-center gap-4 mb-4">
         <button
@@ -171,7 +186,12 @@ export default function TicTacToeGame() {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 mb-4 max-w-full mx-auto" style={{ maxWidth: "360px" }}>
+      <div
+        className={`grid gap-2 mb-4`}
+        style={{
+          gridTemplateColumns: `repeat(${BOARD_SIZE}, minmax(0, 1fr))`,
+        }}
+      >
         {board.map((cell, idx) => (
           <button
             key={idx}
@@ -179,7 +199,7 @@ export default function TicTacToeGame() {
               if (mode === "ai" && !isHumanTurn) return;
               handleClick(idx);
             }}
-            className="w-full aspect-square border rounded flex items-center justify-center text-4xl font-bold hover:bg-gray-100 disabled:text-gray-400"
+            className="w-full aspect-square border rounded flex items-center justify-center text-2xl font-bold hover:bg-gray-100 disabled:text-gray-400"
             disabled={!!cell || !!message}
           >
             {cell}
