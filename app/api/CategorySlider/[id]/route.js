@@ -14,15 +14,29 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ message: "شناسه معتبر نیست" }, { status: 400 });
     }
 
-
-    const deleted = await CategorySlider.findByIdAndDelete(id);
-    if (!deleted) {
+    // 1. پیدا کردن اسلایدر برای به‌دست آوردن URL تصویر
+    const slider = await CategorySlider.findById(id);
+    if (!slider) {
       return NextResponse.json({ message: "اسلایدر یافت نشد" }, { status: 404 });
     }
 
-    // ⚠️ اگر بخواهی تصویر blob را هم حذف کنی، باید از API Vercel Blob استفاده کنی (اینجا حذف نشده)
+    const imageUrl = slider.image; // فرض بر اینه که فیلد image وجود داره و آدرس blob رو نگه می‌داره
 
-    return NextResponse.json({ message: "اسلایدر حذف شد", deleted }, { status: 200 });
+    // 2. حذف از دیتابیس
+    const deleted = await CategorySlider.findByIdAndDelete(id);
+
+    // 3. حذف فایل blob از Vercel
+    if (imageUrl) {
+      const blobUrl = new URL(imageUrl);
+      const blobPath = blobUrl.pathname; // مثلاً: "/my-app/slider/12345.png"
+
+      await del(blobPath, {
+        token: BLOB_READ_WRITE_TOKEN,
+      });
+    }
+
+    return NextResponse.json({ message: "اسلایدر و تصویر با موفقیت حذف شدند", deleted }, { status: 200 });
+
   } catch (error) {
     console.error("DELETE error:", error);
     return NextResponse.json({ message: "خطا در حذف اسلایدر" }, { status: 500 });

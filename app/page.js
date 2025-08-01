@@ -18,7 +18,7 @@ import CategorySlider from './component/home/Classification/classification';
       <FeaturedProducts />
     </section>
 <section className="container-xxl my-4">
-      {/* <CategorySlider/> */}
+      <CategorySlider/>
 
     </section>
     <section className="container-xxl my-4">
