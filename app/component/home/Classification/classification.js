@@ -11,16 +11,17 @@ import { Spinner } from "react-bootstrap";
  
 
 export default function CategorySlider() {
-const [data,setdata]=useState();
+const [data,setdata]=useState([]);
 const [loading,setloading]=useState(true);
-const [erore,seterore]=useState(true);
+const [erore,seterore]=useState("");
  
 useEffect (()=>{
  const fetchdata= async()=>{
  
    try {
 const res = await fetch("/api/CategorySlider")
- setdata(res.json())
+const dataJson = await res.json();
+setdata(dataJson);
 if(!res){
   seterore("ارور خطا در دریافت  اطلاعات ")
 }
@@ -67,7 +68,7 @@ fetchdata()
         }}
         className="w-full"
       >
-        {data.map((category, index) => (
+        {data&& data.map((category, index) => (
           <SwiperSlide key={index}>
             <a
               href={category.UrlLink}
