@@ -14,7 +14,8 @@ import {
   FaKey,
   FaChevronDown,
   FaRegUser,
-  FaUserShield,  // آیکون ادمین
+  FaUserShield,
+  FaUser,  // آیکون ادمین
 } from "react-icons/fa";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -153,12 +154,13 @@ const Header = () => {
               </Link>
             </motion.div>
           )}
-
-          <motion.div 
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="relative"
-          >
+<motion.div
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+  className="cursor-pointer hidden sm:block"
+>
+<FaUser />
             <Link href="/Cart" className="text-xl p-2 rounded-full transition-colors flex items-center hover:bg-gray-100 text-gray-700">
               <FaShoppingCart className="text-gray-700" />
               {totalItems > 0 && (

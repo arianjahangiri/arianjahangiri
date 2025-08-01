@@ -7,7 +7,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/grid";
 import { useEffect, useState } from "react";
-import { Spinner } from "react-bootstrap";
 
 export default function CategorySlider() {
   const [data, setData] = useState([]);
@@ -36,7 +35,7 @@ export default function CategorySlider() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12">
       <div className="text-center mb-10">
-        {loading &&  <p>loading</p>}
+        {loading && <p className="text-gray-500 text-sm">در حال بارگذاری...</p>}
         <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
           خرید بر اساس دسته‌بندی
         </h3>
@@ -47,18 +46,20 @@ export default function CategorySlider() {
       {!error && !loading && (
         <Swiper
           modules={[Navigation, Autoplay, Pagination, Grid]}
-          spaceBetween={12}
-          slidesPerView={2}
+          spaceBetween={8}
+          slidesPerView={4}
           grid={{ rows: 2, fill: "row" }}
           navigation
           autoplay={{ delay: 4000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
           loop
           breakpoints={{
-            480: { slidesPerView: 2 },
-            640: { slidesPerView: 3 },
-            768: { slidesPerView: 4 },
-            1024: { slidesPerView: 5 },
+            320: { slidesPerView: 3 },
+            480: { slidesPerView: 4 },
+            640: { slidesPerView: 5 },
+            768: { slidesPerView: 6 },
+            1024: { slidesPerView: 7 },
+            1280: { slidesPerView: 8 },
           }}
           className="w-full"
         >
@@ -66,16 +67,16 @@ export default function CategorySlider() {
             <SwiperSlide key={category._id}>
               <a
                 href={category.UrlLink}
-                className="flex flex-col items-center text-center p-2 hover:scale-105 transition-transform"
+                className="flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition-transform"
               >
-                <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] md:w-[90px] md:h-[90px] flex items-center justify-center">
+                <div className="w-[86px] h-[86px] rounded-full bg-gray-100 shadow-sm flex items-center justify-center">
                   <img
                     src={category.imageUrl}
                     alt={category.name}
-                    className="w-full h-full object-contain rounded"
+                    className="w-14 h-14 object-contain"
                   />
                 </div>
-                <p className="mt-2 text-xs sm:text-sm font-medium text-gray-700 truncate w-full">
+                <p className="mt-2 text-[13px] sm:text-sm font-medium text-gray-800 truncate w-full">
                   {category.name}
                 </p>
               </a>
