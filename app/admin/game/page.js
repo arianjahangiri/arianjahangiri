@@ -5,8 +5,8 @@ import React, { useState, useEffect } from "react";
 const HUMAN = "X";
 const AI = "O";
 
-const SIZE = 5; // تعداد خانه‌ها در هر ردیف/ستون
-const WIN_LENGTH = 4; // طول ترکیب برنده
+const SIZE = 5;
+const WIN_LENGTH = 4;
 
 function generateBoard(size) {
   return Array(size * size).fill(null);
@@ -26,10 +26,10 @@ function checkWinner(board, player) {
     for (let col = 0; col < SIZE; col++) {
       const idx = row * SIZE + col;
 
-      if (col <= SIZE - WIN_LENGTH && checkLine(idx, 1)) return true; // افقی
-      if (row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE)) return true; // عمودی
-      if (col <= SIZE - WIN_LENGTH && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE + 1)) return true; // قطر اصلی
-      if (col >= WIN_LENGTH - 1 && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE - 1)) return true; // قطر فرعی
+      if (col <= SIZE - WIN_LENGTH && checkLine(idx, 1)) return true;
+      if (row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE)) return true;
+      if (col <= SIZE - WIN_LENGTH && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE + 1)) return true;
+      if (col >= WIN_LENGTH - 1 && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE - 1)) return true;
     }
   }
 
@@ -40,51 +40,43 @@ function isTie(board) {
   return board.every((cell) => cell !== null);
 }
 
-function minimax(newBoard, player) {
-  const availSpots = newBoard.reduce((acc, val, idx) => {
+function minimax(board, player, depth = 0, alpha = -Infinity, beta = Infinity) {
+  if (checkWinner(board, HUMAN)) return { score: -10 + depth };
+  if (checkWinner(board, AI)) return { score: 10 - depth };
+  if (isTie(board)) return { score: 0 };
+
+  const availSpots = board.reduce((acc, val, idx) => {
     if (val === null) acc.push(idx);
     return acc;
   }, []);
 
-  if (checkWinner(newBoard, HUMAN)) return { score: -10 };
-  if (checkWinner(newBoard, AI)) return { score: 10 };
-  if (availSpots.length === 0) return { score: 0 };
-
-  const moves = [];
+  let bestMove = null;
 
   for (let i = 0; i < availSpots.length; i++) {
-    const move = {};
-    move.index = availSpots[i];
-    newBoard[availSpots[i]] = player;
+    const idx = availSpots[i];
+    board[idx] = player;
 
-    move.score = player === AI
-      ? minimax(newBoard, HUMAN).score
-      : minimax(newBoard, AI).score;
+    const result = minimax(board, player === AI ? HUMAN : AI, depth + 1, alpha, beta);
+    board[idx] = null;
 
-    newBoard[availSpots[i]] = null;
-    moves.push(move);
+    const move = { index: idx, score: result.score };
+
+    if (player === AI) {
+      if (bestMove === null || move.score > bestMove.score) {
+        bestMove = move;
+      }
+      alpha = Math.max(alpha, move.score);
+    } else {
+      if (bestMove === null || move.score < bestMove.score) {
+        bestMove = move;
+      }
+      beta = Math.min(beta, move.score);
+    }
+
+    if (beta <= alpha) break; // Cut-off
   }
 
-  let bestMove;
-  if (player === AI) {
-    let bestScore = -Infinity;
-    moves.forEach((m, i) => {
-      if (m.score > bestScore) {
-        bestScore = m.score;
-        bestMove = i;
-      }
-    });
-  } else {
-    let bestScore = Infinity;
-    moves.forEach((m, i) => {
-      if (m.score < bestScore) {
-        bestScore = m.score;
-        bestMove = i;
-      }
-    });
-  }
-
-  return moves[bestMove];
+  return bestMove;
 }
 
 export default function TicTacToeGame() {
@@ -95,26 +87,27 @@ export default function TicTacToeGame() {
 
   useEffect(() => {
     if (mode === "ai" && !isHumanTurn && !message) {
-      const bestMove = minimax([...board], AI);
-      if (bestMove && bestMove.index !== undefined) {
-        const newBoard = [...board];
-        newBoard[bestMove.index] = AI;
+      setTimeout(() => {
+        const bestMove = minimax([...board], AI);
+        if (bestMove && bestMove.index !== undefined) {
+          const newBoard = [...board];
+          newBoard[bestMove.index] = AI;
 
-        if (checkWinner(newBoard, AI)) {
-          setBoard(newBoard);
-          setMessage("کامپیوتر برنده شد! 😢");
-        } else if (isTie(newBoard)) {
-          setBoard(newBoard);
-          setMessage("بازی مساوی شد!");
-        } else {
-          setBoard(newBoard);
-          setIsHumanTurn(true);
+          if (checkWinner(newBoard, AI)) {
+            setBoard(newBoard);
+            setMessage("کامپیوتر برنده شد! 😢");
+          } else if (isTie(newBoard)) {
+            setBoard(newBoard);
+            setMessage("بازی مساوی شد!");
+          } else {
+            setBoard(newBoard);
+            setIsHumanTurn(true);
+          }
         }
-      }
+      }, 50); // برای تجربه بهتر کاربر
     }
   }, [isHumanTurn]);
 
-  // کد تقلب: Alt + 1 → برد بازیکن
   useEffect(() => {
     const handler = (e) => {
       if (e.altKey && e.key === "1") {
