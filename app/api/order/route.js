@@ -6,7 +6,8 @@ import Cart from "@/app/modls/cart/Cart";
 import Order from "@/app/modls/order/Order";
 import { authOptions } from "../auth/[...nextauth]/route";
 import connect from "@/app/utils/db";
-
+import product from "@/app/modls/catgory/product";
+ 
 export async function POST(req) {
   try {
     await connect();
