@@ -32,7 +32,6 @@ function checkWinner(board, player) {
       if (col >= WIN_LENGTH - 1 && row <= SIZE - WIN_LENGTH && checkLine(idx, SIZE - 1)) return true;
     }
   }
-
   return false;
 }
 
@@ -40,43 +39,31 @@ function isTie(board) {
   return board.every((cell) => cell !== null);
 }
 
-function minimax(board, player, depth = 0, alpha = -Infinity, beta = Infinity) {
-  if (checkWinner(board, HUMAN)) return { score: -10 + depth };
-  if (checkWinner(board, AI)) return { score: 10 - depth };
-  if (isTie(board)) return { score: 0 };
+function getBestMove(board) {
+  const emptyCells = board
+    .map((cell, idx) => (cell === null ? idx : null))
+    .filter((x) => x !== null);
 
-  const availSpots = board.reduce((acc, val, idx) => {
-    if (val === null) acc.push(idx);
-    return acc;
-  }, []);
-
-  let bestMove = null;
-
-  for (let i = 0; i < availSpots.length; i++) {
-    const idx = availSpots[i];
-    board[idx] = player;
-
-    const result = minimax(board, player === AI ? HUMAN : AI, depth + 1, alpha, beta);
-    board[idx] = null;
-
-    const move = { index: idx, score: result.score };
-
-    if (player === AI) {
-      if (bestMove === null || move.score > bestMove.score) {
-        bestMove = move;
-      }
-      alpha = Math.max(alpha, move.score);
-    } else {
-      if (bestMove === null || move.score < bestMove.score) {
-        bestMove = move;
-      }
-      beta = Math.min(beta, move.score);
-    }
-
-    if (beta <= alpha) break; // Cut-off
+  // 1. اگر کامپیوتر می‌تونه ببره، همون‌جا بازی کن
+  for (let idx of emptyCells) {
+    const testBoard = [...board];
+    testBoard[idx] = AI;
+    if (checkWinner(testBoard, AI)) return idx;
   }
 
-  return bestMove;
+  // 2. اگر انسان در حرکت بعدی می‌تونه ببره، جلوشو بگیر
+  for (let idx of emptyCells) {
+    const testBoard = [...board];
+    testBoard[idx] = HUMAN;
+    if (checkWinner(testBoard, HUMAN)) return idx;
+  }
+
+  // 3. وسط رو بگیر اگر خالیه
+  const center = Math.floor((SIZE * SIZE) / 2);
+  if (board[center] === null) return center;
+
+  // 4. یک خانه رندوم از خانه‌های خالی
+  return emptyCells[Math.floor(Math.random() * emptyCells.length)];
 }
 
 export default function TicTacToeGame() {
@@ -87,24 +74,21 @@ export default function TicTacToeGame() {
 
   useEffect(() => {
     if (mode === "ai" && !isHumanTurn && !message) {
-      setTimeout(() => {
-        const bestMove = minimax([...board], AI);
-        if (bestMove && bestMove.index !== undefined) {
-          const newBoard = [...board];
-          newBoard[bestMove.index] = AI;
-
-          if (checkWinner(newBoard, AI)) {
-            setBoard(newBoard);
-            setMessage("کامپیوتر برنده شد! 😢");
-          } else if (isTie(newBoard)) {
-            setBoard(newBoard);
-            setMessage("بازی مساوی شد!");
-          } else {
-            setBoard(newBoard);
-            setIsHumanTurn(true);
-          }
+      const bestMove = getBestMove(board);
+      if (bestMove !== undefined) {
+        const newBoard = [...board];
+        newBoard[bestMove] = AI;
+        if (checkWinner(newBoard, AI)) {
+          setBoard(newBoard);
+          setMessage("کامپیوتر برنده شد! 😢");
+        } else if (isTie(newBoard)) {
+          setBoard(newBoard);
+          setMessage("بازی مساوی شد!");
+        } else {
+          setBoard(newBoard);
+          setIsHumanTurn(true);
         }
-      }, 50); // برای تجربه بهتر کاربر
+      }
     }
   }, [isHumanTurn]);
 
@@ -119,7 +103,6 @@ export default function TicTacToeGame() {
         setMessage("تقلب فعال شد! شما برنده شدید 🎉");
       }
     };
-
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [board]);
@@ -155,7 +138,7 @@ export default function TicTacToeGame() {
 
   return (
     <div className="max-w-xl mx-auto p-4 text-center">
-      <h2 className="text-2xl font-bold mb-4">بازی دوز ۵×۵ پیشرفته 🎮</h2>
+      <h2 className="text-2xl font-bold mb-4">بازی دوز ۵×۵ سریع 🎮</h2>
 
       <div className="flex justify-center gap-4 mb-4">
         <button
