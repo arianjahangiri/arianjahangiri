@@ -5,7 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Link from "next/link";
 import {
   FaBan, FaBox, FaGamepad, FaIndustry, FaInfoCircle, FaList, FaModx,
-  FaSlidersH, FaTag, FaUser, FaBars, FaTimes
+  FaSlidersH, FaTag, FaUser, FaBars, FaTimes,
+  FaCalendarAlt
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -23,6 +24,7 @@ const navLinks = [
   { href: "/admin/comment/post", icon: FaInfoCircle, label: "کامنت‌ها" },
   { href: "/admin/game", icon: FaGamepad, label: "بازی" },
   { href: "/admin/Brand/post", icon: FaIndustry, label: "برندها" },
+  { href: "/admin/CategorySlider/POST", icon: FaCalendarAlt, label: " خرید بر اساس دسته بندی" },
   { href: "/admin/discountcode/post", icon: FaTag, label: "کد تخفیف" },
   { href: "/admin/AdsSection/post", icon: FaBan, label: "بنر تبلیغات" },
   { href: "/admin/sliddeShow/post", icon: FaSlidersH, label: "اسلاید شو" },

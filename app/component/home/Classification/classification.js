@@ -5,44 +5,41 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/grid";
+import { useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 
-const categories = [
-  {
-    name: "موبایل",
-    imgSrc:
-      "https://dkstatics-public.digikala.com/digikala-mega-menu/09a98a13c782e12a245930b4515d243b17734a33_1740299441.jpg",
-    link: "/landing/mobile/",
-  },
-  {
-    name: "کالای دیجیتال",
-    imgSrc:
-      "https://dkstatics-public.digikala.com/digikala-mega-menu/151ec29bae111afd3b6a0e71cec5c4c26f1c3014_1740299456.jpg",
-    link: "/main/electronic-devices/",
-  },
-  {
-    name: "خانه و آشپزخانه",
-    imgSrc:
-      "https://dkstatics-public.digikala.com/digikala-mega-menu/8a042388b93c5116604f35092a1fb35f8f0756be_1740299467.jpg",
-    link: "/main/home-and-kitchen/",
-  },
-  {
-    name: "آرایشی بهداشتی",
-    imgSrc:
-      "https://dkstatics-public.digikala.com/digikala-mega-menu/8a042388b93c5116604f35092a1fb35f8f0756be_1740299467.jpg",
-    link: "/main/personal-appliance/",
-  },
-  {
-    name: "خودرو و موتورسیکلت",
-    imgSrc:
-      "https://dkstatics-public.digikala.com/digikala-mega-menu/8a042388b93c5116604f35092a1fb35f8f0756be_1740299467.jpg",
-    link: "/main/vehicle/",
-  },
-];
+ 
 
 export default function CategorySlider() {
+const [data,setdata]=useState();
+const [loading,setloading]=useState(true);
+const [erore,seterore]=useState(true);
+ 
+useEffect (()=>{
+ const fetchdata= async()=>{
+ 
+   try {
+const res = await fetch("/api/CategorySlider")
+ setdata(res.json())
+if(!res){
+  seterore("ارور خطا در دریافت  اطلاعات ")
+}
+   }catch(erore){
+   seterore(erore)
+   }finally{
+setloading(false)
+   }
+ }
+fetchdata()
+},[])
+
+
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12">
       <div className="text-center mb-10">
+        {loading && <Spinner/>}
         <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
           خرید بر اساس دسته‌بندی
         </h3>
@@ -70,15 +67,15 @@ export default function CategorySlider() {
         }}
         className="w-full"
       >
-        {categories.map((category, index) => (
+        {data.map((category, index) => (
           <SwiperSlide key={index}>
             <a
-              href={category.link}
+              href={category.UrlLink}
               className="flex flex-col items-center text-center p-2 hover:scale-105 transition-transform"
             >
               <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] md:w-[90px] md:h-[90px] flex items-center justify-center">
                 <img
-                  src={category.imgSrc}
+                  src={category.imageUrl}
                   alt={category.name}
                   className="w-full h-full object-contain rounded"
                 />
@@ -89,6 +86,7 @@ export default function CategorySlider() {
             </a>
           </SwiperSlide>
         ))}
+        {erore&& <p className="text-red-600 ">{erore}</p>}
       </Swiper>
     </div>
   );

@@ -196,7 +196,7 @@ const Header = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                className="cursor-pointer"
+                className="cursor-pointer sm:hidden"
               >
                 {session?.user?.Image_profile ? (
                   <Image
