@@ -12,7 +12,7 @@ import React, { useEffect, useState, useRef } from "react";
 const Page = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const tableRef = useRef(null);
+ 
   const route = useRouter();
 
  const fetchDel = async (id) => {
