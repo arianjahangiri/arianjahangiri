@@ -6,17 +6,17 @@ import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-const ProductGallery = () => {
+const ProductGallery = ({id}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const route = useRouter();
-  const params = useParams();
-  const productId = params.id;
+ 
+ 
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const jsonData = await getImageGallery(productId);
+      const jsonData = await getImageGallery(id);
       setData(jsonData);
     } catch (error) {
       console.error("خطا در fetchData:", error.message);

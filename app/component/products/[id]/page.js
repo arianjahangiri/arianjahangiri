@@ -32,10 +32,10 @@ const page = async ({ params }) => {
       <section className="container-xxl">
         <section className="row">
           <section className="col-md-4">
-            <ProductGallery />
+            <ProductGallery id={id} />
           </section>
           <section className="col-md-5">
-            <Productdetails />
+            <Productdetails id={id} />
           </section>
           <section className="col-md-3">
             <section className="content-wrapper bg-white p-3 rounded-2 cart-total-price">

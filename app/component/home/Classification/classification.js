@@ -61,10 +61,10 @@ export default function CategorySlider() {
             1024: { slidesPerView: 7 },
             1280: { slidesPerView: 8 },
           }}
-          className="w-full gap-[40px]"
+          className="w-full "
         >
           {data.map((category) => (
-            <SwiperSlide key={category._id}>
+            <SwiperSlide  className="gap-[40px]" key={category._id}>
               <a
                 href={category.UrlLink}
                 className="flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition-transform"
