@@ -1,3 +1,4 @@
+import categories from "@/app/modls/categories-menu/categories";
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
 import { NextResponse } from "next/server";
@@ -9,45 +10,42 @@ export async function GET(request) {
     const query = searchParams.get("q");
 
     if (!query) {
-      return NextResponse.json(
-        { error: "پارامتر جستجو الزامی است" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "پارامتر جستجو الزامی است" }, { status: 400 });
     }
 
-    // مرحله ۱: جستجو در نام محصول
-    const productsByName = await product
-      .find({
-        name: { $regex: query, $options: "i" }, // insensitive
-      })
-      .populate("category");
+    // ابتدا دسته‌بندی‌هایی که با کوئری مطابقت دارند را پیدا می‌کنیم
+    const matchingCategories = await categories.find({
+      title: { $regex: query, $options: "i" }
+    });
 
-    // مرحله ۲: همه محصولات برای فیلتر دسته‌بندی
-    const allProducts = await product.find({}).populate("category");
+    // استخراج ObjectId دسته‌بندی‌ها
+    const categoryIds = matchingCategories.map(category => category._id);
 
-    // فیلتر محصولاتی که دسته‌بندی شامل عبارت جستجو باشد
-    const productsByCategory = allProducts.filter(
-      (item) =>
-        item.category &&
-        item.category.title &&
-        item.category.title.toLowerCase().includes(query.toLowerCase())
-    );
+    // جستجو برای محصولات که یا نامشان با کوئری مطابقت دارد یا در دسته‌بندی‌های مطابقت دار قرار دارند
+    const searchResults = await product.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $in: categoryIds } }
+      ]
+    }).populate({
+      path: "category",
+      model: "categories"
+    }).lean();
 
-    // ادغام نتایج بدون تکرار
-    const mergedResults = [
-      ...productsByName,
-      ...productsByCategory.filter(
-        (item) =>
-          !productsByName.some((p) => p._id.toString() === item._id.toString())
-      ),
-    ];
-
-    return NextResponse.json(mergedResults, { status: 200 });
+    // حذف تکراری‌ها در صورتی که محصولی هم در نام و هم در دسته‌بندی مطابقت داشته باشد
+    const uniqueResults = [];
+    const seenIds = new Set();
+    
+    searchResults.forEach(result => {
+      if (!seenIds.has(result._id.toString())) {
+        seenIds.add(result._id.toString());
+        uniqueResults.push(result);
+      }
+    });
+ 
+    return NextResponse.json(uniqueResults, { status: 200 });
   } catch (error) {
     console.error("خطا در جستجو:", error);
-    return NextResponse.json(
-      { error: "خطایی در جستجو رخ داد" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "خطایی در جستجو رخ داد" }, { status: 500 });
   }
-}
+  }
