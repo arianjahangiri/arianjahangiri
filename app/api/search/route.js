@@ -1,3 +1,4 @@
+import categories from "@/app/modls/categories-menu/categories";
 import product from "@/app/modls/catgory/product";
 import connect from "@/app/utils/db";
 import { NextResponse } from "next/server";
@@ -15,8 +16,11 @@ export async function GET(request) {
     // جستجو با regex (غیر حساس به حروف)
     const searchResults = await product.find({
       name: { $regex: query, $options: "i" },
-    });
-
+    }).populate({
+      path: "category", // نام فیلد در مدل Product
+      model: "categories" // نام مدل مورد نظر
+    });  ;
+ 
     return NextResponse.json(searchResults, { status: 200 });
   } catch (error) {
     console.error("خطا در جستجو:", error);
