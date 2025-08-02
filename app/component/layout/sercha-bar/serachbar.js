@@ -12,7 +12,7 @@ const SearchBar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim().length > 0) {
-      router.push(`/component/searchpage?q=${encodeURIComponent(searchQuery)}`);
+      router.push(`/component/home/searchpage?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
