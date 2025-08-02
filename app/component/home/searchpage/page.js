@@ -75,7 +75,7 @@ const SearchPage = () => {
                 <img
                   src={item.imageUrl}
                   alt={item.name}
-                  className="w-full h-64 sm:h-64 object-cover rounded"
+                  className="w-full h-72 sm:h-72 object-cover rounded"
                 />
               ) : (
                 <div className="w-full h-48 sm:h-56 bg-gray-200 rounded flex items-center justify-center text-gray-500">
