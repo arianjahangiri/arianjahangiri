@@ -15,39 +15,34 @@ export async function GET(request) {
       );
     }
 
-    // جستجو محصولات بر اساس نام
-    const searchResults = await product
+    // مرحله ۱: جستجو در نام محصول
+    const productsByName = await product
       .find({
-        name: { $regex: query, $options: "i" },
+        name: { $regex: query, $options: "i" }, // insensitive
       })
-      .populate({
-        path: "category",
-        model: "categories",
-      });
+      .populate("category");
 
-    // اضافه کردن محصولاتی که دسته‌بندی آن‌ها شامل عبارت جستجو باشد
-    const categoryResults = await product
-      .find({})
-      .populate({
-        path: "category",
-        model: "categories",
-      });
+    // مرحله ۲: همه محصولات برای فیلتر دسته‌بندی
+    const allProducts = await product.find({}).populate("category");
 
-    const filteredCategoryResults = categoryResults.filter(
+    // فیلتر محصولاتی که دسته‌بندی شامل عبارت جستجو باشد
+    const productsByCategory = allProducts.filter(
       (item) =>
         item.category &&
+        item.category.title &&
         item.category.title.toLowerCase().includes(query.toLowerCase())
     );
 
     // ادغام نتایج بدون تکرار
-    const finalResults = [
-      ...searchResults,
-      ...filteredCategoryResults.filter(
-        (item) => !searchResults.some((p) => p._id.toString() === item._id.toString())
+    const mergedResults = [
+      ...productsByName,
+      ...productsByCategory.filter(
+        (item) =>
+          !productsByName.some((p) => p._id.toString() === item._id.toString())
       ),
     ];
 
-    return NextResponse.json(finalResults, { status: 200 });
+    return NextResponse.json(mergedResults, { status: 200 });
   } catch (error) {
     console.error("خطا در جستجو:", error);
     return NextResponse.json(
