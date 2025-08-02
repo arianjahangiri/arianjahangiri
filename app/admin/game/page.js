@@ -5,8 +5,8 @@ import React, { useState, useEffect } from "react";
 const HUMAN = "X";
 const AI = "O";
 
-const SIZE = 5;
-const WIN_LENGTH = 4;
+const SIZE = 3;
+const WIN_LENGTH = 3;
 
 function generateBoard(size) {
   return Array(size * size).fill(null);

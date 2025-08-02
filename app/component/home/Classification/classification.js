@@ -61,7 +61,7 @@ export default function CategorySlider() {
             1024: { slidesPerView: 7 },
             1280: { slidesPerView: 8 },
           }}
-          className="w-full"
+          className="w-full gap-[40px]"
         >
           {data.map((category) => (
             <SwiperSlide key={category._id}>
