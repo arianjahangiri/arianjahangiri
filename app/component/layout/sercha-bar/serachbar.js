@@ -1,45 +1,26 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 const SearchBar = () => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // درخواست به API با debounce
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (searchQuery.trim().length > 1) {
-        fetchResults();
-      } else {
-        setResults([]);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchQuery]);
-
-  const fetchResults = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
-      if (!res.ok) {
-        throw new Error("خطا در دریافت نتایج");
-      }
-      const data = await res.json();
-      setResults(data);
-    } catch (error) {
-      console.error("خطا:", error);
-    } finally {
-      setLoading(false);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim().length > 0) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto mt-6">
+    <form
+      onSubmit={handleSearch}
+      className="relative w-full max-w-md mx-auto mt-6"
+    >
       <motion.div
         className={`relative transition-all duration-300 ease-in-out ${
           searchFocused
@@ -71,6 +52,7 @@ const SearchBar = () => {
         {/* دکمه پاک کردن */}
         {searchQuery && (
           <motion.button
+            type="button"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
@@ -83,33 +65,7 @@ const SearchBar = () => {
           </motion.button>
         )}
       </motion.div>
-
-      {/* نمایش نتایج جستجو */}
-      <AnimatePresence>
-        {results.length > 0 && (
-          <motion.ul
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto"
-          >
-            {loading && (
-              <li className="p-3 text-gray-500 text-center">در حال جستجو...</li>
-            )}
-            {!loading &&
-              results.map((item) => (
-                <li
-                  key={item._id}
-                  className="p-3 hover:bg-gray-100 cursor-pointer text-gray-700"
-                >
-                  {item.name}
-                </li>
-              ))}
-          </motion.ul>
-        )}
-      </AnimatePresence>
-    </div>
+    </form>
   );
 };
 
