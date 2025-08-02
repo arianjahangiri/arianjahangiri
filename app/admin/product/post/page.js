@@ -1,10 +1,11 @@
 "use client";
 import { FcGallery } from "react-icons/fc";
-// import AuthWrapper from "@/app/commponent/auth/auth";
+ 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import AuthWrapper from "@/app/commponent/auth/auth";
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -47,7 +48,7 @@ const Page = () => {
   }, []);
 
   return (
-    // <AuthWrapper>
+    <AuthWrapper>
     <div className="flex flex-col min-h-screen w-full bg-gray-900 text-white p-6">
 
 {loading &&<div className="flex justify-center items-center h-screen bg-gray-100">
@@ -119,7 +120,7 @@ const Page = () => {
         )}
       </div>
     </div>
-    // </AuthWrapper>
+    </AuthWrapper>
   );
 };
 
