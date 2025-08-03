@@ -33,7 +33,7 @@ export default function CategorySlider() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 gap-[40px]  lg:px-8 mt-16 mb-12">
       <div className="text-center mb-10 gap-[40px]">
         {loading && <p className="text-gray-500 text-sm">در حال بارگذاری...</p>}
         <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
