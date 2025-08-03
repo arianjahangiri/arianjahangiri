@@ -7,6 +7,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/grid";
 import { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function CategorySlider() {
   const [data, setData] = useState([]);
@@ -35,7 +37,6 @@ export default function CategorySlider() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12">
       <div className="text-center mb-10">
-        {loading && <p className="text-gray-500 text-sm">در حال بارگذاری...</p>}
         <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
           خرید بر اساس دسته‌بندی
         </h3>
@@ -43,10 +44,33 @@ export default function CategorySlider() {
 
       {error && !loading && <p className="text-red-600 text-center">{error}</p>}
 
+      {loading && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6 animate-fade-in">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <Skeleton
+                circle
+                width={86}
+                height={86}
+                baseColor="#e0e0e0"
+                highlightColor="#f5f5f5"
+              />
+              <Skeleton
+                width={70}
+                height={12}
+                className="mt-2"
+                baseColor="#e0e0e0"
+                highlightColor="#f5f5f5"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       {!error && !loading && (
         <Swiper
           modules={[Navigation, Autoplay, Pagination, Grid]}
-          spaceBetween={8}
+          spaceBetween={40} // فاصله بین اسلایدها
           slidesPerView={4}
           grid={{ rows: 2, fill: "row" }}
           navigation
@@ -61,10 +85,10 @@ export default function CategorySlider() {
             1024: { slidesPerView: 7 },
             1280: { slidesPerView: 8 },
           }}
-          className="w-full "
+          className="w-full"
         >
           {data.map((category) => (
-            <SwiperSlide  className="gap-40" key={category._id}>
+            <SwiperSlide className="" key={category._id}>
               <a
                 href={category.UrlLink}
                 className="flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition-transform"
@@ -84,6 +108,22 @@ export default function CategorySlider() {
           ))}
         </Swiper>
       )}
+
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
