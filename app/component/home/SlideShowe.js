@@ -3,6 +3,8 @@
 import { getslideshowImage } from '@/app/home/lib/owlcarousel/getslideshowImage';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const SlideShowe = () => {
   const [data, setData] = useState([]);
@@ -25,21 +27,52 @@ const SlideShowe = () => {
 
   if (loading) {
     return (
-      <div className="container py-4">
+      <div className="container py-4 animate-fade-in">
         <div className="row g-3">
           {/* Skeleton Slideshow */}
           <div className="col-md-8">
-            <div className="w-100 h-[400px] bg-gray-200 animate-pulse rounded-2"></div>
+            <Skeleton
+              height={400}
+              borderRadius="12px"
+              baseColor="#e0e0e0"
+              highlightColor="#f5f5f5"
+            />
           </div>
 
           {/* Skeleton Thumbnails */}
           <div className="col-md-4">
             <div className="d-flex flex-column gap-3">
-              <div className="w-100 h-[200px] bg-gray-200 animate-pulse rounded-2"></div>
-              <div className="w-100 h-[200px] bg-gray-200 animate-pulse rounded-2"></div>
+              <Skeleton
+                height={200}
+                borderRadius="12px"
+                baseColor="#e0e0e0"
+                highlightColor="#f5f5f5"
+              />
+              <Skeleton
+                height={200}
+                borderRadius="12px"
+                baseColor="#e0e0e0"
+                highlightColor="#f5f5f5"
+              />
             </div>
           </div>
         </div>
+
+        <style jsx>{`
+          .animate-fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+          }
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
       </div>
     );
   }

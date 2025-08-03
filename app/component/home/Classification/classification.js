@@ -88,7 +88,7 @@ export default function CategorySlider() {
           className="w-full"
         >
           {data.map((category) => (
-            <SwiperSlide className="" key={category._id}>
+            <SwiperSlide spaceBetween={40}  className="" key={category._id}>
               <a
                 href={category.UrlLink}
                 className="flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition-transform"
