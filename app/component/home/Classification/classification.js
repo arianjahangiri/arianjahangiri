@@ -33,8 +33,8 @@ export default function CategorySlider() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 gap-[40px]  lg:px-8 mt-16 mb-12">
-      <div className="text-center mb-10 gap-[40px]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12">
+      <div className="text-center mb-10">
         {loading && <p className="text-gray-500 text-sm">در حال بارگذاری...</p>}
         <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
           خرید بر اساس دسته‌بندی
@@ -61,10 +61,10 @@ export default function CategorySlider() {
             1024: { slidesPerView: 7 },
             1280: { slidesPerView: 8 },
           }}
-          className="w-full gap-[40px] "
+          className="w-full "
         >
           {data.map((category) => (
-            <SwiperSlide  className="gap-[40px]" key={category._id}>
+            <SwiperSlide  className="gap-40" key={category._id}>
               <a
                 href={category.UrlLink}
                 className="flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition-transform"
