@@ -22,7 +22,7 @@ const Productdetails = ({id}) => {
       setLoading(false);
 
       // اسکرول به پایین پس از بارگذاری داده‌ها
-      tableRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     } catch (error) {
       console.error(error.message);
       setLoading(false);

@@ -17,7 +17,7 @@ import CategorySlider from './component/home/Classification/classification';
     <section className="container-xxl my-4 ">
       <FeaturedProducts />
     </section>
-<section className="container-xxl my-4">
+<section className="container-xxl gap-40 my-4">
       <CategorySlider/>
 
     </section>
