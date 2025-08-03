@@ -1,80 +1,74 @@
 "use client";
+
 import { setComment } from "@/app/home/lib/CommentProduct/setComment";
+import { getComment } from "@/app/home/lib/CommentProduct/getComment";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { getToken } from "next-auth/jwt";
-import { getComment } from "@/app/home/lib/CommentProduct/getComment";
 
 const Comments = () => {
-  const { id: productID } = useParams();
+  const { id } = useParams(); // productId از URL
   const { data: session, status } = useSession();
- 
 
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
   const [data, setData] = useState({
     text: "",
-    productId: "",
+    productId: id,
     userId: "",
     isApproval: false,
   });
- const [dataFetch,setDataFetch]=useState()
+  const [comments, setComments] = useState([]);
 
+  // وقتی سشن لود شد، userId رو ست کن
   useEffect(() => {
-    if (session?.user?.id && productID) {
+    if (session?.user?.id) {
       setData((prev) => ({
         ...prev,
         userId: session.user.id,
-        productId: productID,
       }));
     }
-  }, [session, productID]);
- 
-  const fetchSendComment = async () => {
+  }, [session]);
+
+  // گرفتن کامنت‌های محصول
+  const fetchComments = async () => {
+    try {
+      setLoading(true);
+      const result = await getComment(id); // فقط کامنت‌های این محصول
+      setComments(result);
+    } catch (error) {
+      console.log("خطا در دریافت کامنت‌ها:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchComments();
+  }, [id]);
+
+  // ارسال کامنت
+  const handleSendComment = async () => {
+    if (!data.text.trim()) {
+      alert("متن دیدگاه را وارد کنید.");
+      return;
+    }
 
     try {
       setLoading(true);
       await setComment(data.text, data.productId, data.userId, data.isApproval);
       setData((prev) => ({ ...prev, text: "" }));
-      setShowModal(false); // بستن مودال بعد از ثبت دیدگاه
+      setShowModal(false);
+      fetchComments(); // رفرش کامنت‌ها
     } catch (error) {
-      console.log(error);
+      console.log("خطا در ارسال کامنت:", error);
     } finally {
       setLoading(false);
     }
   };
-  
- 
-       const fetchComment = async () => {
-
-    try {
-      setLoading(true);
- 
-          const data =  await getComment(productID); 
-      setDataFetch(data);
-      setShowModal(false); // بستن مودال بعد از ثبت دیدگاه
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
- 
- 
-  useEffect(() => {
-    if (productID) {
-      fetchComment();
-    }
-  }, [productID]);
-// console.log(session);
- console.log(dataFetch);
-
-  if (loading) return <div>در حال بارگذاری...</div>;
 
   if (status !== "authenticated") {
     return (
@@ -103,7 +97,7 @@ const Comments = () => {
           </button>
         </section>
 
-        {/* Modal with react-bootstrap */}
+        {/* Modal */}
         <Modal show={showModal} onHide={() => setShowModal(false)} centered>
           <Modal.Header closeButton>
             <Modal.Title>
@@ -128,27 +122,38 @@ const Comments = () => {
             <Button variant="secondary" onClick={() => setShowModal(false)}>
               بستن
             </Button>
-            <Button variant="primary" onClick={fetchSendComment}>
-              ثبت دیدگاه
+            <Button
+              variant="primary"
+              onClick={handleSendComment}
+              disabled={loading}
+            >
+              {loading ? <Spinner animation="border" size="sm" /> : "ثبت دیدگاه"}
             </Button>
           </Modal.Footer>
         </Modal>
-{dataFetch&& dataFetch.map((comment)=>{ return(
-      <section className="product-comment-list" key={comment._id}>
-          <section className="product-comment">
-            <section className="product-comment-header d-flex justify-content-between">
-              <span className="product-comment-date">۲۱ مرداد ۱۴۰۰</span>
-              <span className="product-comment-title"> {comment.userId.name}</span>
+
+        {/* لیست دیدگاه‌ها */}
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <section className="product-comment-list" key={comment._id}>
+              <section className="product-comment">
+                <section className="product-comment-header d-flex justify-content-between">
+                  <span className="product-comment-date">
+                    {comment.createdAt
+                      ? new Date(comment.createdAt).toLocaleDateString("fa-IR")
+                      : "تاریخ نامشخص"}
+                  </span>
+                  <span className="product-comment-title">
+                    {comment.userId?.name || "کاربر ناشناس"}
+                  </span>
+                </section>
+                <section className="product-comment-body">{comment.text}</section>
+              </section>
             </section>
-            <section className="product-comment-body">
-       {comment.text}
-            </section>
-          </section>
-        </section>
-        )
-   })}
-        {/* لیست دیدگاه‌ها (ثابت یا بعداً داینامیک) */}
-    
+          ))
+        ) : (
+          <p className="text-center text-muted mt-3">هیچ دیدگاهی ثبت نشده است.</p>
+        )}
       </section>
     </div>
   );
