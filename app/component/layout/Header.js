@@ -100,18 +100,19 @@ const Header = () => {
         {/* آیکون‌ها و پروفایل */}
         <div className="flex items-center gap-4">
           {/* دکمه ادمین */}
-          {status === "authenticated" && session?.user?.isAdmin && (
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="text-xl p-2 rounded-full transition-colors hover:bg-gray-100 text-red-600 cursor-pointer"
-            >
-              <Link href="/admin" aria-label="پنل مدیریت" className="flex items-center gap-1">
-                <FaUserShield />
-                <span className="hidden sm:inline text-sm font-medium">ادمین</span>
-              </Link>
-            </motion.div>
-          )}
+    {status === "authenticated" && session?.user?.isAdmin && (
+  <motion.div
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    className="hidden md:flex text-xl p-2 rounded-full transition-colors hover:bg-gray-100 text-red-600 cursor-pointer"
+  >
+    <Link href="/admin" aria-label="پنل مدیریت" className="flex items-center gap-1">
+      <FaUserShield />
+      <span className="hidden sm:inline text-sm font-medium">ادمین</span>
+    </Link>
+  </motion.div>
+)}
+
 
           <motion.div 
             whileHover={{ scale: 1.1 }}
