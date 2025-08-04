@@ -35,9 +35,9 @@ export default function CategorySlider() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4  !space-x-reverse space-x-40 sm:px-6 lg:px-8 mt-16 mb-12">
-      <div className="text-center mb-10 !space-x-reverse space-x-40">
-        <h3 className="text-xl sm:text-2xl !space-x-reverse space-x-40 lg:text-3xl font-semibold">
+    <div className="max-w-7xl mx-auto px-4  !gap-20 !space-x-reverse space-x-40 sm:px-6 lg:px-8 mt-16 mb-12">
+      <div className="text-center mb-10 !gap-20 !space-x-reverse space-x-40">
+        <h3 className="text-xl sm:text-2xl !space-x-reverse !gap-20 space-x-40 lg:text-3xl font-semibold">
           خرید بر اساس دسته‌بندی
         </h3>
       </div>
