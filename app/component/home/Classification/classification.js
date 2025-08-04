@@ -15,6 +15,7 @@ export default function CategorySlider() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Fetch category data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,15 +36,20 @@ export default function CategorySlider() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4  !gap-20 !space-x-reverse space-x-40 sm:px-6 lg:px-8 mt-16 mb-12">
-      <div className="text-center mb-10 !gap-20 !space-x-reverse space-x-40">
-        <h3 className="text-xl sm:text-2xl !space-x-reverse !gap-20 space-x-40 lg:text-3xl font-semibold">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-16">
+      {/* Title */}
+      <div className="text-center mb-10">
+        <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
           خرید بر اساس دسته‌بندی
         </h3>
       </div>
 
-      {error && !loading && <p className="text-red-600 text-center">{error}</p>}
+      {/* Error message */}
+      {error && !loading && (
+        <p className="text-red-600 text-center mb-6">{error}</p>
+      )}
 
+      {/* Skeleton loading */}
       {loading && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6 animate-fade-in">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -67,10 +73,11 @@ export default function CategorySlider() {
         </div>
       )}
 
-      {!error && !loading && (
+      {/* Swiper slider */}
+      {!error && !loading && data.length > 0 && (
         <Swiper
           modules={[Navigation, Autoplay, Pagination, Grid]}
-          spaceBetween={40} // فاصله بین اسلایدها
+          spaceBetween={30}
           slidesPerView={4}
           grid={{ rows: 2, fill: "row" }}
           navigation
@@ -85,15 +92,15 @@ export default function CategorySlider() {
             1024: { slidesPerView: 7 },
             1280: { slidesPerView: 8 },
           }}
-          className="w-full !space-x-reverse space-x-40  "
+          className="w-full"
         >
           {data.map((category) => (
-            <SwiperSlide spaceBetween={40}  className=" mx-40!gap-40" key={category._id}>
+            <SwiperSlide key={category._id} className="flex justify-center">
               <a
                 href={category.UrlLink}
                 className="flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition-transform"
               >
-                <div className="w-[86px] h-[86px] rounded-full bg-gray-100 shadow-sm flex items-center justify-center">
+                <div className="w-[86px] h-[86px] rounded-full bg-gray-100 shadow-sm flex items-center justify-center overflow-hidden">
                   <img
                     src={category.imageUrl}
                     alt={category.name}
@@ -109,6 +116,7 @@ export default function CategorySlider() {
         </Swiper>
       )}
 
+      {/* Fade animation */}
       <style jsx>{`
         .animate-fade-in {
           animation: fadeIn 0.6s ease-in-out;
