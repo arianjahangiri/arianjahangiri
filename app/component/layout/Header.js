@@ -114,20 +114,32 @@ const Header = () => {
 )}
 
 
-          <motion.div 
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="relative"
-          >
-            <Link href="/Cart" className="text-xl p-2 rounded-full transition-colors flex items-center hover:bg-gray-100 text-gray-700">
-              <FaShoppingCart className="text-gray-700" />
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-          </motion.div>
+      <motion.div 
+  whileHover={{ scale: 1.1 }}
+  whileTap={{ scale: 0.9 }}
+  className="relative"
+>
+  <Link
+    href="/Cart"
+    className="text-xl p-2 rounded-full transition-colors flex items-center hover:bg-gray-100 text-gray-700"
+  >
+    <FaShoppingCart className="text-gray-700" />
+    {totalItems > 0 && (
+      <span
+        className="
+          absolute 
+          -top-1 
+          -right-1 md:-right-1 
+          bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center
+          sm:-right-[3px]   /* فاصله از لبه برای موبایل */
+        "
+      >
+        {totalItems}
+      </span>
+    )}
+  </Link>
+</motion.div>
+
 
           {status !== "authenticated" ? (
             <div className="hidden md:flex gap-2">
