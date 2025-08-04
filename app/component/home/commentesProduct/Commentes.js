@@ -133,27 +133,30 @@ const Comments = () => {
         </Modal>
 
         {/* لیست دیدگاه‌ها */}
-        {comments.length > 0   && comments.isApproval===true ? (
-          comments.map((comment) => (
-            <section className="product-comment-list" key={comment._id}>
-              <section className="product-comment">
-                <section className="product-comment-header d-flex justify-content-between">
-                  <span className="product-comment-date">
-                    {comment.createdAt
-                      ? new Date(comment.createdAt).toLocaleDateString("fa-IR")
-                      : "تاریخ نامشخص"}
-                  </span>
-                  <span className="product-comment-title">
-                    {comment.userId?.name || "کاربر ناشناس"}
-                  </span>
-                </section>
-                <section className="product-comment-body">{comment.text}</section>
-              </section>
-            </section>
-          ))
-        ) : (
-          <p className="text-center text-muted mt-3">هیچ دیدگاهی ثبت نشده است.</p>
-        )}
+{comments.length > 0 ? (
+  comments
+    .filter(comment => comment.isApproval === true)
+    .map(comment => (
+      <section className="product-comment-list" key={comment._id}>
+        <section className="product-comment">
+          <section className="product-comment-header d-flex justify-content-between">
+            <span className="product-comment-date">
+              {comment.createdAt
+                ? new Date(comment.createdAt).toLocaleDateString("fa-IR")
+                : "تاریخ نامشخص"}
+            </span>
+            <span className="product-comment-title">
+              {comment.userId?.name || "کاربر ناشناس"}
+            </span>
+          </section>
+          <section className="product-comment-body">{comment.text}</section>
+        </section>
+      </section>
+    ))
+) : (
+  <p className="text-center text-muted mt-3">هیچ دیدگاهی ثبت نشده است.</p>
+)}
+
       </section>
     </div>
   );
