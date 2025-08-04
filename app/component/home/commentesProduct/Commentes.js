@@ -133,7 +133,7 @@ const Comments = () => {
         </Modal>
 
         {/* لیست دیدگاه‌ها */}
-        {comments.length > 0 ? (
+        {comments.length > 0   && comments.isApproval===true ? (
           comments.map((comment) => (
             <section className="product-comment-list" key={comment._id}>
               <section className="product-comment">
