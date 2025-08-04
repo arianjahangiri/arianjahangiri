@@ -1,30 +1,67 @@
-"use client"
-import { useCart } from '@/app/context/cartContext';
+"use client";
 
-import React, { useState } from 'react';
- 
+import { useCart } from "@/app/context/cartContext";
+import React, { useState } from "react";
+import Skeleton from "react-loading-skeleton";
 
-const AddTOCartButton = ({productId}) => {
-    const {addToCart,error}=useCart();
-    const [loading ,setLoading]=useState(false);
-    const [localErrore,setlocalErrore]=useState(null) 
-   const HandelAddToCart=async() => {
-     setLoading(true)
-     setlocalErrore(null)
-     await addToCart(productId,1 )
-     if (error){
-        setlocalErrore(error) 
-     }
-     setLoading(false)
-   };
-    return (
-        <div>
-                <section className="">
-                                        <button disabled={loading} onClick={HandelAddToCart} href="#" className="btn btn-danger d-block">{loading ? "درحال افزودن ...": "افزودن به سبد خرید"} </button>
-                                        {localErrore&& <p className='text-danger text-lg m-9   '>{localErrore}</p>}
-                                    </section>
-        </div>
-    );
+const AddToCartButton = ({ productId }) => {
+  const { addToCart, error } = useCart();
+
+  // Local state for loading and error handling
+  const [loading, setLoading] = useState(false);
+  const [localError, setLocalError] = useState(null);
+
+  // Handle Add To Cart action
+  const handleAddToCart = async () => {
+    setLoading(true);
+    setLocalError(null);
+
+    try {
+      await addToCart(productId, 1);
+
+      // If there's an error from context, set it locally
+      if (error) {
+        setLocalError(error);
+      }
+    } catch (err) {
+      setLocalError("An unexpected error occurred. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      {/* Button or Skeleton Loader */}
+      {loading ? (
+        <Skeleton
+          height={45}
+          width={200}
+          baseColor="#e5e7eb"
+          highlightColor="#f3f4f6"
+          className="rounded-lg"
+        />
+      ) : (
+        <button
+          disabled={loading}
+          onClick={handleAddToCart}
+          className={`w-full md:w-auto px-6 py-3 rounded-lg text-white font-semibold transition duration-300 ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-red-500 hover:bg-red-600"
+          }`}
+        >
+          افزودن به سبد خرید
+        </button>
+      )}
+
+      {/* Error Message */}
+      {localError && (
+        <p className="text-red-600 text-sm mt-3">{localError}</p>
+      )}
+    </div>
+  );
 };
- 
-export default AddTOCartButton;
+
+export default AddToCartButton;

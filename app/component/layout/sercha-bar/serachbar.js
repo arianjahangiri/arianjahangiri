@@ -11,7 +11,7 @@ const SearchBar = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // وقتی کاربر تایپ می‌کند → API را صدا بزن
+
   useEffect(() => {
     if (searchQuery.trim().length > 1) {
       const delayDebounce = setTimeout(() => {
@@ -52,7 +52,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto mt-6">
+    <div className=" hidden  md:relative   md:w-full  md:max-w-md  md:mx-auto  md:mt-6">
       <form onSubmit={handleSearch}>
         <motion.div
           className={`relative transition-all duration-300 ease-in-out ${

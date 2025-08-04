@@ -6,15 +6,17 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form, Spinner } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import Skeleton from "react-loading-skeleton";
 
 const Comments = () => {
-  const { id } = useParams(); // productId از URL
+  const { id } = useParams();
   const { data: session, status } = useSession();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);  
+  const [fetching, setFetching] = useState(true);  
+  const [error, setError] = useState(null); 
   const [showModal, setShowModal] = useState(false);
+
   const [data, setData] = useState({
     text: "",
     productId: id,
@@ -23,7 +25,7 @@ const Comments = () => {
   });
   const [comments, setComments] = useState([]);
 
-  // وقتی سشن لود شد، userId رو ست کن
+
   useEffect(() => {
     if (session?.user?.id) {
       setData((prev) => ({
@@ -33,16 +35,18 @@ const Comments = () => {
     }
   }, [session]);
 
-  // گرفتن کامنت‌های محصول
+
   const fetchComments = async () => {
     try {
-      setLoading(true);
-      const result = await getComment(id); // فقط کامنت‌های این محصول
+      setFetching(true);
+      setError(null);
+      const result = await getComment(id);
       setComments(result);
-    } catch (error) {
-      console.log("خطا در دریافت کامنت‌ها:", error);
+    } catch (err) {
+      setError("مشکلی در دریافت کامنت‌ها رخ داده است. لطفا دوباره تلاش کنید.");
+      console.error("خطا در دریافت کامنت‌ها:", err);
     } finally {
-      setLoading(false);
+      setFetching(false);
     }
   };
 
@@ -50,7 +54,7 @@ const Comments = () => {
     if (id) fetchComments();
   }, [id]);
 
-  // ارسال کامنت
+
   const handleSendComment = async () => {
     if (!data.text.trim()) {
       alert("متن دیدگاه را وارد کنید.");
@@ -62,9 +66,10 @@ const Comments = () => {
       await setComment(data.text, data.productId, data.userId, data.isApproval);
       setData((prev) => ({ ...prev, text: "" }));
       setShowModal(false);
-      fetchComments(); // رفرش کامنت‌ها
-    } catch (error) {
-      console.log("خطا در ارسال کامنت:", error);
+      fetchComments();
+    } catch (err) {
+      setError("مشکلی در ارسال کامنت رخ داده است.");
+      console.error("خطا در ارسال کامنت:", err);
     } finally {
       setLoading(false);
     }
@@ -72,91 +77,115 @@ const Comments = () => {
 
   if (status !== "authenticated") {
     return (
-      <section className="product-comment-body text-center p-4">
-        <p>برای ثبت دیدگاه ابتدا وارد حساب کاربری خود شوید.</p>
+      <section className="text-center p-6 bg-gray-100 rounded-lg">
+        <p className="text-gray-700 mb-4">برای ثبت دیدگاه ابتدا وارد حساب کاربری خود شوید.</p>
         <Link href={"/auth/login"}>
-          <button className="btn btn-primary">ورود</button>
+          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+            ورود
+          </button>
         </Link>
       </section>
     );
   }
 
   return (
-    <div className="comments-container">
-      <section id="comments" className="content-header mt-4 mb-5">
-        <h2 className="content-header-title">دیدگاه ها</h2>
+    <div className="comments-container max-w-3xl mx-auto px-4">
+      {/* Header */}
+      <section className="mt-6 mb-6 flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">دیدگاه ها</h2>
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
+        >
+          <i className="fa fa-plus"></i> افزودن دیدگاه
+        </button>
       </section>
 
-      <section className="product-comments">
-        <section className="comment-add-wrapper text-center mb-4">
-          <button
-            className="comment-add-button btn btn-outline-primary"
-            onClick={() => setShowModal(true)}
-          >
-            <i className="fa fa-plus"></i> افزودن دیدگاه
-          </button>
-        </section>
 
-        {/* Modal */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              <i className="fa fa-plus"></i> افزودن دیدگاه
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>دیدگاه شما</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={4}
-                  placeholder="دیدگاه خود را وارد کنید..."
-                  value={data.text}
-                  onChange={(e) => setData({ ...data, text: e.target.value })}
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              بستن
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleSendComment}
-              disabled={loading}
+      {error && (
+        <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-center">
+          {error}
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowModal(false)}
             >
-              {loading ? <Spinner animation="border" size="sm" /> : "ثبت دیدگاه"}
-            </Button>
-          </Modal.Footer>
-        </Modal>
+              ✕
+            </button>
+            <h3 className="text-xl font-semibold mb-4">افزودن دیدگاه</h3>
+            <textarea
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              rows="4"
+              placeholder="دیدگاه خود را وارد کنید..."
+              value={data.text}
+              onChange={(e) => setData({ ...data, text: e.target.value })}
+            ></textarea>
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+              >
+                بستن
+              </button>
+              <button
+                onClick={handleSendComment}
+                className={`px-4 py-2 rounded-lg text-white ${
+                  loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
+                }`}
+                disabled={loading}
+              >
+                {loading ? "در حال ارسال..." : "ثبت دیدگاه"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-        {/* لیست دیدگاه‌ها */}
-{comments.length > 0 ? (
-  comments
-    .filter(comment => comment.isApproval === true)
-    .map(comment => (
-      <section className="product-comment-list" key={comment._id}>
-        <section className="product-comment">
-          <section className="product-comment-header d-flex justify-content-between">
-            <span className="product-comment-date">
-              {comment.createdAt
-                ? new Date(comment.createdAt).toLocaleDateString("fa-IR")
-                : "تاریخ نامشخص"}
-            </span>
-            <span className="product-comment-title">
-              {comment.userId?.name || "کاربر ناشناس"}
-            </span>
-          </section>
-          <section className="product-comment-body">{comment.text}</section>
-        </section>
-      </section>
-    ))
-) : (
-  <p className="text-center text-muted mt-3">هیچ دیدگاهی ثبت نشده است.</p>
-)}
-
+  
+      <section className="space-y-4">
+        {fetching ? (
+       
+          Array(3)
+            .fill()
+            .map((_, index) => (
+              <div
+                key={index}
+                className="bg-gray-100 p-4 rounded-lg shadow-sm border border-gray-200"
+              >
+                <Skeleton height={15} width={100} className="mb-2" />
+                <Skeleton count={2} />
+              </div>
+            ))
+        ) : comments.length > 0 ? (
+          comments
+            .filter((comment) => comment.isApproval === true)
+            .map((comment) => (
+              <div
+                key={comment._id}
+                className="bg-gray-100 p-4 rounded-lg shadow-sm border border-gray-200"
+              >
+                <div className="flex justify-between mb-2 text-gray-600 text-sm">
+                  <span>
+                    {comment.createdAt
+                      ? new Date(comment.createdAt).toLocaleDateString("fa-IR")
+                      : "تاریخ نامشخص"}
+                  </span>
+                  <span className="font-semibold text-gray-800">
+                    {comment.userId?.name || "کاربر ناشناس"}
+                  </span>
+                </div>
+                <p className="text-gray-700">{comment.text}</p>
+              </div>
+            ))
+        ) : (
+          <p className="text-center text-gray-500">هیچ دیدگاهی ثبت نشده است.</p>
+        )}
       </section>
     </div>
   );
