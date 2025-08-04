@@ -6,17 +6,13 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 
 const Comments = () => {
   const { id } = useParams();
   const { data: session, status } = useSession();
 
-  const [loading, setLoading] = useState(false);  
-  const [fetching, setFetching] = useState(true);  
-  const [error, setError] = useState(null); 
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
   const [data, setData] = useState({
     text: "",
     productId: id,
@@ -25,7 +21,7 @@ const Comments = () => {
   });
   const [comments, setComments] = useState([]);
 
-
+  // تنظیم userId بعد از لود سشن
   useEffect(() => {
     if (session?.user?.id) {
       setData((prev) => ({
@@ -35,18 +31,16 @@ const Comments = () => {
     }
   }, [session]);
 
-
+  // دریافت کامنت‌ها
   const fetchComments = async () => {
     try {
-      setFetching(true);
-      setError(null);
+      setLoading(true);
       const result = await getComment(id);
       setComments(result);
-    } catch (err) {
-      setError("مشکلی در دریافت کامنت‌ها رخ داده است. لطفا دوباره تلاش کنید.");
-      console.error("خطا در دریافت کامنت‌ها:", err);
+    } catch (error) {
+      console.log("خطا در دریافت کامنت‌ها:", error);
     } finally {
-      setFetching(false);
+      setLoading(false);
     }
   };
 
@@ -54,7 +48,7 @@ const Comments = () => {
     if (id) fetchComments();
   }, [id]);
 
-
+  // ارسال کامنت
   const handleSendComment = async () => {
     if (!data.text.trim()) {
       alert("متن دیدگاه را وارد کنید.");
@@ -67,9 +61,8 @@ const Comments = () => {
       setData((prev) => ({ ...prev, text: "" }));
       setShowModal(false);
       fetchComments();
-    } catch (err) {
-      setError("مشکلی در ارسال کامنت رخ داده است.");
-      console.error("خطا در ارسال کامنت:", err);
+    } catch (error) {
+      console.log("خطا در ارسال کامنت:", error);
     } finally {
       setLoading(false);
     }
@@ -91,22 +84,19 @@ const Comments = () => {
   return (
     <div className="comments-container max-w-3xl mx-auto px-4">
       {/* Header */}
-      <section className="mt-6 mb-6 flex justify-between items-center">
+      <section className="mt-6 mb-6">
         <h2 className="text-2xl font-bold text-gray-800">دیدگاه ها</h2>
+      </section>
+
+      {/* Add Comment Button */}
+      <section className="text-center mb-6">
         <button
           onClick={() => setShowModal(true)}
-          className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
+          className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2 mx-auto"
         >
           <i className="fa fa-plus"></i> افزودن دیدگاه
         </button>
       </section>
-
-
-      {error && (
-        <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-center">
-          {error}
-        </div>
-      )}
 
       {/* Modal */}
       {showModal && (
@@ -147,22 +137,9 @@ const Comments = () => {
         </div>
       )}
 
-  
+      {/* Comments List */}
       <section className="space-y-4">
-        {fetching ? (
-       
-          Array(3)
-            .fill()
-            .map((_, index) => (
-              <div
-                key={index}
-                className="bg-gray-100 p-4 rounded-lg shadow-sm border border-gray-200"
-              >
-                <Skeleton height={15} width={100} className="mb-2" />
-                <Skeleton count={2} />
-              </div>
-            ))
-        ) : comments.length > 0 ? (
+        {comments.length > 0 ? (
           comments
             .filter((comment) => comment.isApproval === true)
             .map((comment) => (
