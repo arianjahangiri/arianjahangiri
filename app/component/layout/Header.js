@@ -74,6 +74,7 @@ const Header = () => {
       {/* هدر اصلی */}
       <div className="max-w-7xl mx-auto h-[109px] flex items-center justify-between px-4 py-3">
         {/* لوگو و منوی همبرگری */}
+        
   <Image 
                 src="/images/brand/ChatGPT Image Jul 28, 2025, 11_30_02 PM.png" 
                 alt="Logo" 
