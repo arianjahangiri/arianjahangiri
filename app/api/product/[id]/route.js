@@ -123,7 +123,7 @@ export async function PUT(request, { params }) {
       // اگر بخواهید حذف کنید باید با توکن و API جداگانه اقدام کنید
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
+    const updatedProduct = await product.findByIdAndUpdate(
       id,
       {
         name: name.trim(),
