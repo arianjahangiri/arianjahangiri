@@ -93,7 +93,7 @@ export async function PUT(request, { params }) {
 
     await connect();
 
-    const existingProduct = await Product.findById(id);
+    const existingProduct = await product.findById(id);
     if (!existingProduct) {
       return NextResponse.json(
         { success: false, message: "محصول یافت نشد" },
