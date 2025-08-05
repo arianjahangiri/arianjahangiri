@@ -45,11 +45,17 @@ const page = async ({ params }) => {
                   {product.price.toLocaleString()} <span className="small">تومان</span>
                 </p>
               </section>
+                <section className="d-flex justify-content-between align-items-center">
+                <p className="text-gray-500">    مقدار کم شده از قیمت </p>
+                <p className="text-muted text-red-500">
+                  {product.discount_amount.toLocaleString()} <span className="small">تومان</span>
+                </p>
+              </section>
              
               <section className="border-bottom mb-3"></section>
               <section className="d-flex justify-content-end align-items-center">
                 <p className="fw-bolder">
-                  {product.price.toLocaleString()} <span className="small">تومان</span>
+                  {product.finalPrice.toLocaleString()} <span className="small">تومان</span>
                 </p>
               </section>
               <AddTOCartButton productId={product._id} />

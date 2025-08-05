@@ -34,10 +34,10 @@ export async function POST(request) {
     }
 
     const name = data.get("name");
-    const discount = parseFloat(data.get("discount"));
+    const discount = data.get("discount");
     const description = data.get("description");
-    const price = parseFloat(data.get("price"));
-    const stock = parseInt(data.get("stock"));
+    const price =data.get("price");
+    const stock = data.get("stock");
     const category = data.get("category");
 
     if (!name || !description || isNaN(price) || isNaN(stock) || isNaN(discount) || !category) {
@@ -64,15 +64,18 @@ export async function POST(request) {
       access: "public",
       contentType: file.type,
     });
-
+const discount_amount = (Number(price) * Number(discount)) / 100;
     await connect();
-
+const finalPrice = price - discount;
     const newProduct = await product.create({
       name,
       description,
       price,
       stock,
       discount,
+      discount_amount,
+         finalPrice,
+     
       category,
       imageUrl: blob.url, // آدرس تصویر در Vercel Blob
     });

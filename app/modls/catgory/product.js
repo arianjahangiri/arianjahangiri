@@ -29,9 +29,19 @@ const ProductSchema = new mongoose.Schema(
       ref: "categories", // اینجا باید با نام مدل شما یکسان باشد
       required: true,
     }, 
+      
+  
+  finalPrice: {
+    type: Number,
+    required: true,
+  }, discount_amount: {
+    type: Number,
+    required: true,
+  },
     views: { type: Number, default: 0 },
         discount: { type: Number, default: 0 },
   },
+  
   { timestamps: true }
 );
 

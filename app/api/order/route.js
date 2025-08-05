@@ -26,7 +26,7 @@ export async function POST(req) {
     const discountPrice = cart.discountPrice || 0;
     const finalPrice = totalPrice - discountPrice;
     const newOrder = await Order.create({
-      user: session.user.id,
+      user: session.user.id, 
       items: cart.items,
       finalPrice,
       totalPrice,

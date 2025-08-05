@@ -77,6 +77,8 @@ export async function POST(req) {
     cart.discountPrice = discountAmount;
     await cart.save();
 
+    
+
     const updatedCart = await Cart.findOne({ user: session.user.id });
 
     return NextResponse.json({
