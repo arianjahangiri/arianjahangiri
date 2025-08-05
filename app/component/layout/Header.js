@@ -14,7 +14,10 @@ import {
   FaKey,
   FaChevronDown,
   FaRegUser,
-  FaUserShield,  // آیکون ادمین
+  FaUserShield,
+  FaHome,
+  FaThLarge,
+  FaUser,  // آیکون ادمین
 } from "react-icons/fa";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -24,6 +27,9 @@ import Link from "next/link";
 import LogoutButton from "@/app/commponent/auth/LogoutButton";
 import { useCart } from "@/app/context/cartContext";
 import SearchBar from "./sercha-bar/serachbar";
+import { MdApps } from "react-icons/md";
+ 
+
 
 const Header = () => {
   const [categories, setCategories] = useState([]);
@@ -64,39 +70,22 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="w-full shadow-sm z-50 sticky top-0 border-b bg-white border-gray-100">
+    <header className="w-full  shadow-sm z-50 sticky top-0 border-b bg-white border-gray-100">
       {/* هدر اصلی */}
       <div className="max-w-7xl mx-auto h-[109px] flex items-center justify-between px-4 py-3">
         {/* لوگو و منوی همبرگری */}
-        <div className="flex items-center gap-4">
-          <Link href="/">
-            <motion.div 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="cursor-pointer"
-            >
-              <Image 
+  <Image 
                 src="/images/brand/ChatGPT Image Jul 28, 2025, 11_30_02 PM.png" 
                 alt="Logo" 
                 width={108} 
                 height={101} 
                 priority 
-                className="hover:opacity-90 transition-opacity"
+                className="hover:opacity-90 hidden md:flex  transition-opacity"
               />
-            </motion.div>
-          </Link>
-          <button 
-            className="lg:hidden text-xl p-2 rounded-full transition-colors hover:bg-gray-100 text-gray-700"
-            onClick={() => setMobileMenuOpen(true)}
-            aria-label="Open menu"
-          >
-            <FaBars />
-          </button>
-        </div>
 
         {/* نوار جستجو */}
-       <SearchBar/>
-
+       <SearchBar className=""/>
+<FaSignOutAlt className=" w-8 h-8  flex  mr-4   md:hidden"/>
         {/* آیکون‌ها و پروفایل */}
         <div className="flex items-center gap-4">
           {/* دکمه ادمین */}
@@ -117,7 +106,7 @@ const Header = () => {
       <motion.div 
   whileHover={{ scale: 1.1 }}
   whileTap={{ scale: 0.9 }}
-  className="relative"
+  className="hidden lg:relative"
 >
   <Link
     href="/Cart"
@@ -142,7 +131,7 @@ const Header = () => {
 
 
           {status !== "authenticated" ? (
-            <div className="hidden md:flex gap-2">
+            <div className="hidden md:flex gap-2 mr-5">
               <Link href="/auth/login">
                 <motion.button 
                   whileHover={{ y: -2 }}
@@ -163,7 +152,7 @@ const Header = () => {
               </Link>
             </div>
           ) : (
-            <div className="relative ">
+            <div className="hidden lg:relative ">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -273,157 +262,46 @@ const Header = () => {
       </nav>
 
       {/* منوی موبایل */}
-      <AnimatePresence> 
-        {mobileMenuOpen && (
-          <>
-            <motion.div
-              className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileMenuOpen(false)}
-            />
-
-            <motion.div
-              className="fixed right-0 top-0 w-80 h-full shadow-xl p-4 overflow-y-auto z-50 flex flex-col bg-white"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-800">منوی اصلی</h2>
-                <button 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-full transition-colors hover:bg-gray-100 text-gray-500"
-                >
-                  <FaTimes />
-                </button>
-              </div>
-
-              {/* جستجو موبایل */}
-              <div className="relative mb-6">
-                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="جستجو محصولات..." 
-                  className="w-full pl-10 pr-4 py-2 rounded-full focus:outline-none bg-white text-gray-700 border-gray-200 focus:ring-blue-500 border"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-
-              {/* دسته‌بندی‌ها */}
-              <div className="space-y-1 flex-1 overflow-y-auto">
-                {loading
-                  ? Array.from({ length: 6 }).map((_, i) => (
-                      <Skeleton key={i} height={40} baseColor="#E5E7EB" highlightColor="#F3F4F6" className="mb-2" />
-                    ))
-                  : categories.map((cat) => (
-                      <div key={cat._id} className="mb-2">
-                        <div className="font-medium flex items-center justify-between p-3 rounded-lg transition-colors hover:bg-gray-100 text-gray-700">
-                          <Link 
-                            href={`/category/${cat.slug}`} 
-                            className="flex-1"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            {cat.title}
-                          </Link>
-                          {cat.menu_dropdown?.length > 0 && (
-                            <FaChevronDown className="text-xs text-gray-400" />
-                          )}
-                        </div>
-                        {Array.isArray(cat.menu_dropdown) && cat.menu_dropdown.length > 0 && (
-                          <motion.div 
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            transition={{ duration: 0.2 }}
-                            className="pl-4 overflow-hidden"
-                          >
-                            {cat.menu_dropdown.map(
-                              (item, i) =>
-                                item.text &&
-                                item.LinkUrl && (
-                                  <Link
-                                    key={i}
-                                    href={item.LinkUrl}
-                                    className="block p-2 text-sm rounded transition-colors text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                  >
-                                    {item.text}
-                                  </Link>
-                                )
-                            )}
-                          </motion.div>
-                        )}
-                      </div>
-                    ))}
-              </div>
-
-              {/* بخش احراز هویت موبایل */}
-              <div className="mt-auto pt-4 border-t border-gray-200">
-                {status !== "authenticated" ? (
-                  <div className="flex flex-col gap-3">
-                    <Link href="/auth/login">
-                      <motion.button 
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full py-2.5 rounded-lg transition-colors font-medium border border-blue-500 text-blue-500 !text-center hover:bg-blue-50"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        ورود به حساب
-                      </motion.button>
-                    </Link>
-                    <Link href="/auth/register">
-                      <motion.button 
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full py-2.5 rounded-lg text-white transition-colors font-medium shadow-sm bg-gradient-to-r  !text-center from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        ثبت‌ نام جدید
-                      </motion.button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
-                      <div className="w-10 h-10 rounded-full border flex items-center justify-center bg-blue-100 border-blue-200 text-blue-500">
-                        <FaRegUser />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800">
-                          {session.user.name || "کاربر"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {session.user.email}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* دکمه ادمین در منوی موبایل */}
-                    {session?.user?.isAdmin && (
-                      <Link 
-                        href="/admin"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg transition-colors font-semibold text-red-600 border border-red-600 hover:bg-red-50"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <FaUserShield />
-                        <span>پنل مدیریت</span>
-                      </Link>
-                    )}
-
-                    <LogoutButton 
-                      className="w-full py-2.5 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 bg-red-50 text-red-500 hover:bg-red-100"
-                    >
-                      <FaSignOutAlt />
-                      <span>خروج از حساب</span>
-                    </LogoutButton>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+   
+    <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t border-gray-200 block lg:hidden z-50">
+       <nav className="flex justify-around items-center h-16 text-gray-600 text-xs sm:text-sm">
+         
+         {/* دیجی‌کالای من */}
+         <div className="flex flex-col items-center hover:text-red-500 cursor-pointer">
+           <FaUser className="text-lg sm:text-xl mb-1" />
+           <span>دیجی‌کالای من</span>
+         </div>
+ 
+         {/* مگنت */}
+         <div className="flex flex-col items-center hover:text-red-500 cursor-pointer">
+           <MdApps className="text-lg sm:text-xl mb-1" />
+           <span>مگنت</span>
+         </div>
+ 
+         {/* سبد خرید */}
+         <div className="relative flex flex-col items-center hover:text-red-500 cursor-pointer">
+           <FaShoppingCart className="text-lg sm:text-xl mb-1" />
+           {/* آیکون قرمز روی سبد */}
+           <span className="absolute -top-1 right-2 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full">
+             0
+           </span>
+           <span>سبد خرید</span>
+         </div>
+ 
+         {/* دسته‌بندی */}
+         <div className="flex flex-col items-center hover:text-red-500 cursor-pointer">
+           <FaThLarge className="text-lg sm:text-xl mb-1" />
+           <span>دسته‌بندی</span>
+         </div>
+ 
+         {/* خانه */}
+         <div className="flex flex-col items-center text-black font-bold cursor-pointer">
+           <FaHome className="text-lg sm:text-xl mb-1" />
+           <span>خانه</span>
+         </div>
+ 
+       </nav>
+     </div>
     </header>
   );
 };

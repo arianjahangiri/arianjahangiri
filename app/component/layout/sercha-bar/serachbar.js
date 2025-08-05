@@ -52,7 +52,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative  w-full max-w-md mx-auto mt-6">
+    <div className="relative  mb-7 w-full max-w-md mx-auto mt-6">
       <form onSubmit={handleSearch}>
         <motion.div
           className={`relative transition-all duration-300 ease-in-out ${

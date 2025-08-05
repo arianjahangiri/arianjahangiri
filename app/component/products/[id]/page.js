@@ -64,6 +64,7 @@ const page = async ({ params }) => {
         </section>
         <Relatedporoduct />
         <Commentes />
+        
       </section>
     </div>
   );
