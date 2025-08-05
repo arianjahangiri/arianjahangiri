@@ -15,7 +15,7 @@ export async function GET() {
     })
       .sort({ views: -1 })
       .limit(8)
-      .select("name price imageUrl category views finalPrice discount_amount");
+      .select("name discount price imageUrl category views finalPrice discount_amount");
 
     return NextResponse.json(featuredProducts, { status: 200 });
   } catch (error) {
