@@ -28,6 +28,7 @@ import LogoutButton from "@/app/commponent/auth/LogoutButton";
 import { useCart } from "@/app/context/cartContext";
 import SearchBar from "./sercha-bar/serachbar";
 import { MdApps } from "react-icons/md";
+import { FiHeart } from "react-icons/fi";
  
  
 
@@ -202,7 +203,10 @@ const Header = () => {
               <FaHeart className="ml-2 text-blue-500" />
               <span>علاقه‌مندی‌ها</span>
             </Link>
-
+ <Link href="/favorites" className="flex items-center gap-2 p-3 hover:bg-gray-100 rounded-md transition">
+        <FiHeart className="text-red-500" />
+        <span>علاقه‌مندی‌های من</span>
+      </Link>
             {session?.user?.isAdmin && (
               <Link href="/admin" className="flex items-center px-4 py-3 hover:bg-red-50 text-red-600 font-semibold">
                 <FaUserShield className="ml-2" />
