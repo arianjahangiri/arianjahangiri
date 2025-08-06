@@ -15,7 +15,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${id}`);
+        const response = await fetch(`/api/product/${id}`);
         if (!response.ok) {
           throw new Error('خطا در دریافت اطلاعات محصول');
         }
