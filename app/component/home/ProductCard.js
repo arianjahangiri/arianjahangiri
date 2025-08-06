@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import FavoriteButton from "@/app/components/FavoriteButton";
+ 
 import { motion } from "framer-motion";
 import { 
   FaEye, 
@@ -13,6 +13,7 @@ import {
   FaBoxes
 } from "react-icons/fa";
 import { useCart } from "@/app/context/cartContext";
+import FavoriteButton from "./FavoriteButton";
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
