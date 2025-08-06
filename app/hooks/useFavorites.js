@@ -20,6 +20,11 @@ export const useFavorites = () => {
     try {
       setIsLoading(true);
       const response = await fetch("/api/favorites");
+      
+      if (!response.ok) {
+        throw new Error(`خطای HTTP: ${response.status}`);
+      }
+      
       const data = await response.json();
 
       if (data.success) {
@@ -34,18 +39,22 @@ export const useFavorites = () => {
     }
   }, [session]);
 
-  // بررسی وضعیت علاقه‌مندی یک محصول
+  // بررسی وضعیت علاقه‌مندی یک محصول - با GET
   const checkIsFavorite = useCallback(async (productId) => {
     if (!session?.user) return false;
     
     try {
-      const response = await fetch("/api/favorites/check", {
-        method: "POST",
+      // استفاده از GET به جای POST
+      const response = await fetch(`/api/favorites/check?productId=${productId}`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId }),
+          "Cache-Control": "no-cache"
+        }
       });
+      
+      if (!response.ok) {
+        throw new Error(`خطای HTTP: ${response.status}`);
+      }
       
       const data = await response.json();
       return data.isFavorite;
@@ -70,6 +79,10 @@ export const useFavorites = () => {
         },
         body: JSON.stringify({ productId }),
       });
+
+      if (!response.ok) {
+        throw new Error(`خطای HTTP: ${response.status}`);
+      }
 
       const data = await response.json();
       
