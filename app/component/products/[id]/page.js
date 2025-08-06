@@ -103,7 +103,7 @@ const ProductDetailPage = () => {
     const fetchProductData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/products/${id}`);
+        const response = await fetch(`/api/product/${id}`);
         
         if (!response.ok) {
           if (response.status === 404) {
@@ -150,7 +150,7 @@ const ProductDetailPage = () => {
         });
         
         // ثبت بازدید در سرور
-        const response = await fetch(`/api/products/${productId}/view`, {
+        const response = await fetch(`/api/product/${productId}/view`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
