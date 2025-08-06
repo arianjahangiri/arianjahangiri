@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+
 // آیکون‌ها
 import { 
   FaEye, FaCartPlus, FaStar, FaRegStar, FaCheck, FaTimes, 
@@ -18,9 +19,10 @@ import {
      FaInfoCircle, FaClock, FaUser
 } from 'react-icons/fa';
 
-import FavoriteButton from '@/app/components/FavoriteButton';
+ 
 import Relatedporoduct from '../../home/Relatedporoduct';
 import Comments from '../../home/commentesProduct/Commentes';
+import FavoriteButton from '../../home/FavoriteButton';
 
 // کامپوننت امتیازدهی
 const RatingStars = ({ rating, size = "sm" }) => {
