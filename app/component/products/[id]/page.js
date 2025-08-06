@@ -26,7 +26,7 @@ const ProductDetailPage = () => {
     const fetchProductData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/products/${id}`);
+        const response = await fetch(`/api/product/${id}`);
         
         if (!response.ok) {
           if (response.status === 404) {

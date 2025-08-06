@@ -5,9 +5,9 @@ import connect from "@/app/utils/db";
 export async function POST(request, { params }) {
   try {
     await connect();
-    const { id } = params;
+    const { viewid } = params;
 
-    if (!id) {
+    if (!viewid) {
       return NextResponse.json(
         { success: false, message: "شناسه محصول معتبر نیست" },
         { status: 400 }
@@ -16,7 +16,7 @@ export async function POST(request, { params }) {
 
     // افزایش تعداد بازدید محصول
     const updatedProduct = await product.findByIdAndUpdate(
-      id,
+      viewid,
       { $inc: { views: 1 } },
       { new: true }
     );
