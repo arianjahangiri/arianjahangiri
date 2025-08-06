@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
+ 
 import { motion } from "framer-motion";
 import { 
   FaEye, 
@@ -11,6 +12,7 @@ import {
   FaBoxOpen, 
   FaBoxes
 } from "react-icons/fa";
+ 
 import FavoriteButton from "./FavoriteButton";
 import { useCart } from "@/app/context/cartContext";
 
@@ -18,24 +20,17 @@ const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
   
-  // اطمینان از تبدیل مقدار به عدد و مدیریت مقادیر undefined/null
-  const productStock = parseInt(product.item.stock) || 0;
-  
-  // بررسی دقیق‌تر برای موجودی
-  const isInStock = productStock > 0;
-  
   const discountedPrice = product.discount > 0
     ? product.price - product.price * (product.discount / 100)
     : product.price;
+  
+  const isInStock = product.item.product.stock > 0;
   
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
   };
-
-  // برای اطمینان از اینکه داده‌ها درست نمایش داده می‌شوند
-  console.log(`محصول: ${product.name}, موجودی: ${productStock}, موجود است: ${isInStock}`);
 
   return (
     <motion.div
