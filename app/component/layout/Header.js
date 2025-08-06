@@ -283,7 +283,7 @@ const Header = () => {
          {/* دسته‌بندی */}
          <div className="flex flex-col items-center hover:text-red-500 cursor-pointer">
            <FaThLarge className="text-lg sm:text-xl mb-1" />
-        <a href="./menuecategories" className="text-gray-600 hover:text-red-500 transition-colors">د
+        <a href="/component/layout/menuecategories" className="text-gray-600 hover:text-red-500 transition-colors">د
            
            <span>دسته‌بندی</span>
            
