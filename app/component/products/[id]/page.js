@@ -4,9 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCart } from '@/app/context/cartContext';
 import { FaEye, FaCartPlus, FaStar, FaRegStar, FaCheck, FaTimes, FaBox } from 'react-icons/fa';
-import FavoriteButton from '@/app/components/FavoriteButton';
+ 
 import Cookies from 'js-cookie';
 import { toast } from 'react-hot-toast';
+import FavoriteButton from '../../home/FavoriteButton';
 
 const ProductDetailPage = () => {
   const router = useRouter();
@@ -231,7 +232,7 @@ const ProductDetailPage = () => {
               </button>
               
               <div className="flex items-center justify-center bg-white border border-red-200 p-3 rounded-lg hover:bg-red-50 transition">
-                <FavoriteButton productId={product._id} size={20} />
+                <FavoriteButton  productId={product._id} size={20} />
               </div>
             </div>
           </div>
