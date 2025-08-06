@@ -40,6 +40,7 @@ const FeaturedProducts = () => {
           576: { items: 2 },
           768: { items: 3 },
           992: { items: 4 },
+          1024: { items: 5 },
         },
       });
     }
@@ -55,7 +56,7 @@ const FeaturedProducts = () => {
           <section className="col">
             <section className="content-wrapper bg-white p-3 rounded-2">
               <section className="content-header mb-3">
-                <section className="d-flex justify-content-between align-items-center">
+                <section className="d-flex mb-1 mt-1 justify-content-between align-items-center">
                   <h2 className="content-header-title">
                     <span>پربازدیدترین کالاها</span>
                   </h2>

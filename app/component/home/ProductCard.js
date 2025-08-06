@@ -19,7 +19,7 @@ const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   
   // اطمینان از تبدیل مقدار به عدد و مدیریت مقادیر undefined/null
-  const productStock = parseInt(product?.stock) || 0;
+  const productStock = parseInt(item.product.stock) || 0;
   
   // بررسی دقیق‌تر برای موجودی
   const isInStock = productStock > 0;
