@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getCategories } from "../../home/lib/getCategories";
+ 
 import { FaBars, FaTimes } from "react-icons/fa";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { getCategories } from "@/app/home/lib/getCategories";
 
 const FullScreenMenu = () => {
   const [categories, setCategories] = useState([]);

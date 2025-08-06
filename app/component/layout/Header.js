@@ -28,7 +28,7 @@ import LogoutButton from "@/app/commponent/auth/LogoutButton";
 import { useCart } from "@/app/context/cartContext";
 import SearchBar from "./sercha-bar/serachbar";
 import { MdApps } from "react-icons/md";
-import FullScreenMenu from "./menuecategories";
+ 
  
 
 
@@ -283,7 +283,7 @@ const Header = () => {
          {/* دسته‌بندی */}
          <div className="flex flex-col items-center hover:text-red-500 cursor-pointer">
            <FaThLarge className="text-lg sm:text-xl mb-1" />
-        <a href="./menuecategories/page.js" className="text-gray-600 hover:text-red-500 transition-colors">د
+        <a href="./menuecategories" className="text-gray-600 hover:text-red-500 transition-colors">د
            
            <span>دسته‌بندی</span>
            
