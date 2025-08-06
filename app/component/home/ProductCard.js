@@ -14,7 +14,6 @@ import {
 } from "react-icons/fa";
  
 import FavoriteButton from "./FavoriteButton";
-import { useCart } from "@/app/context/cartContext";
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -23,9 +22,9 @@ const ProductCard = ({ product }) => {
   const discountedPrice = product.discount > 0
     ? product.price - product.price * (product.discount / 100)
     : product.price;
-  
-  const isInStock = product.item.product.stock > 0;
-  
+
+  const stockStatus = product.stock > 0 ? product.stock : "ناموجود";
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -74,11 +73,11 @@ const ProductCard = ({ product }) => {
           <div className={`
             text-xs font-semibold px-2 py-1 rounded-lg 
             flex items-center gap-1 shadow-sm
-            ${isInStock 
+            ${stockStatus 
               ? 'bg-green-100 text-green-700' 
               : 'bg-red-100 text-red-700'}
           `}>
-            {isInStock 
+            {stockStatus 
               ? <><FaBoxOpen size={12} className="ml-1" /> موجود</> 
               : <><FaBoxes size={12} className="ml-1" /> ناموجود</>}
           </div>
@@ -108,10 +107,10 @@ const ProductCard = ({ product }) => {
               p-2 rounded-full shadow-lg bg-white 
               hover:bg-blue-500 hover:text-white
               transition-all duration-300
-              ${!isInStock && 'opacity-60 cursor-not-allowed'}
+              ${!stockStatus && 'opacity-60 cursor-not-allowed'}
             `}
             onClick={handleAddToCart}
-            disabled={!isInStock}
+            disabled={!stockStatus}
           >
             <FaCartPlus size={16} />
           </motion.button>
@@ -183,17 +182,17 @@ const ProductCard = ({ product }) => {
           {/* دکمه خرید */}
           <button
             onClick={handleAddToCart}
-            disabled={!isInStock}
+            disabled={!stockStatus}
             className={`
               w-full mt-3 py-2 rounded-lg transition-all duration-300
               font-medium text-sm flex items-center justify-center gap-2
-              ${isInStock
+              ${stockStatus
                 ? 'bg-blue-500 hover:bg-blue-600 text-white' 
                 : 'bg-gray-200 text-gray-500 cursor-not-allowed'}
             `}
           >
             <FaCartPlus />
-            {isInStock ? 'افزودن به سبد خرید' : 'ناموجود'}
+            {stockStatus ? 'افزودن به سبد خرید' : 'ناموجود'}
           </button>
         </div>
       </div>
