@@ -1,15 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
- 
-import { FaBars, FaTimes } from "react-icons/fa";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { getCategories } from "@/app/home/lib/getCategories";
 
-const FullScreenMenu = () => {
+const SideMenu = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -26,60 +22,34 @@ const FullScreenMenu = () => {
   }, []);
 
   return (
-    <div className="lg:hidden">
-      {/* دکمه باز کردن منو */}
-      <button
-        onClick={() => setMobileMenuOpen(true)}
-        className="p-2 text-gray-700 text-2xl"
-      >
-        <FaBars />
-      </button>
-
-      {/* منوی تمام‌صفحه */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col"
-          >
-            {/* هدر منو */}
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-bold">دسته‌بندی‌ها</h2>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-2xl text-gray-700"
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            {/* دسته‌بندی‌ها */}
-            <div className="p-4">
-              {loading ? (
-                <p className="text-gray-500">در حال بارگذاری...</p>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {categories.map((cat) => (
-                    <Link
-                      key={cat._id}
-                      href={`/category/${cat.slug}`}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-gray-800 text-lg font-medium hover:text-blue-600 transition"
-                    >
-                      {cat.title}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
+    <div className="flex">
+      {/* منوی کناری */}
+      <aside className="w-64 h-screen bg-white border-l shadow-md p-4 flex flex-col">
+        <h2 className="text-lg font-bold mb-4">دسته‌بندی‌ها</h2>
+        {loading ? (
+          <p className="text-gray-500">در حال بارگذاری...</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {categories.map((cat) => (
+              <li key={cat._id}>
+                <Link
+                  href={`/category/${cat.slug}`}
+                  className="block p-2 text-gray-700 hover:bg-gray-100 rounded-md transition"
+                >
+                  {cat.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
-      </AnimatePresence>
+      </aside>
+
+      {/* محتوای اصلی */}
+      <main className="flex-1 p-6">
+        <h1 className="text-2xl font-bold">محتوای اصلی اینجاست</h1>
+      </main>
     </div>
   );
 };
 
-export default FullScreenMenu;
+export default SideMenu;
