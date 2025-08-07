@@ -19,7 +19,7 @@ const AddTOCartButton = ({productId}) => {
    };
     return (
         <div>
-                <section className="">
+                <section className=" bg-danger">
                                         <button disabled={loading} onClick={HandelAddToCart} href="#" className="btn btn-danger d-block">{loading ? "درحال افزودن ...": "افزودن به سبد خرید"} </button>
                                         {localErrore&& <p className='text-danger text-lg m-9   '>{localErrore}</p>}
                                     </section>
