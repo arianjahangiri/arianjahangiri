@@ -5,6 +5,7 @@ import Productdetails from '../../home/Productdetails';
 import Relatedporoduct from '../../home/Relatedporoduct';
 import Commentes from '../../home/commentesProduct/Commentes';
 import AddTOCartButton from '../../home/AddTOCartButton';
+ 
 
 async function getProductData(id) {
   const res = await fetch(
