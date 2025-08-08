@@ -93,7 +93,7 @@ export async function PUT(request, { params }) {
 
     await connect();
 
-    const existingProduct = await Product.findById(id);
+    const existingProduct = await product.findById(id);
     if (!existingProduct) {
       return NextResponse.json(
         { success: false, message: "محصول یافت نشد" },
@@ -123,7 +123,7 @@ export async function PUT(request, { params }) {
       // اگر بخواهید حذف کنید باید با توکن و API جداگانه اقدام کنید
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
+    const updatedProduct = await product.findByIdAndUpdate(
       id,
       {
         name: name.trim(),
