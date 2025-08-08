@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => {
   const handleAddToCart =async (e) => {
     e.preventDefault();
     e.stopPropagation();
-   await addToCart(product.id);
+   await addToCart(product._id);
   };
 
   return (
