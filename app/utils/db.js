@@ -20,21 +20,21 @@ async function connect() {
   }
 
   if (!cached.promise) {
+    // تنظیمات به‌روز بدون استفاده از گزینه‌های منسوخ‌شده
     mongoose.set("strictQuery", true); // جلوگیری از Warning های MongoDB
+
     cached.promise = mongoose
-      .connect(MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
-      .then((mongoose) => {
+      .connect(MONGODB_URI) // بدون useNewUrlParser و useUnifiedTopology
+      .then((mongooseInstance) => {
         console.log("✅ MongoDB Connected Successfully");
-        return mongoose;
+        return mongooseInstance;
       })
       .catch((error) => {
         console.error("❌ MongoDB Connection Failed:", error);
         throw error;
       });
   }
+
   cached.conn = await cached.promise;
   return cached.conn;
 }
