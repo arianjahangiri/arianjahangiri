@@ -31,7 +31,8 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     await connect();
-    const session = await getServerSession({ req, ...authOptions });
+    const session = await get
+    ServerSession({ req, ...authOptions });
     if (!session || !session.user) {
       return NextResponse.json({ error: "لطفا وارد شوید " }, { status: 401 });
     }
@@ -57,7 +58,7 @@ export async function POST(req) {
         
       }
     } else {
-      cart.items.push({ product: productId, quantity , });
+      cart.items.push({ product: productId, quantity   });
     }
     await cart.save();
     return NextResponse.json(cart);
