@@ -1,77 +1,87 @@
+"use client";
 
-"use client"
-import Image from 'next/image';
-import { useParams } from 'next/navigation';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
- 
+import { getImageGallery } from "@/app/home/lib/ProductGallery/GetImage";
+import Image from "next/image";
+import React, { useState, useEffect } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-const Productdetails = ({id}) => {
-
+const ProductGallery = ({ id }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
- 
-      const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch( `https://arianjahangiri.vercel.app/api/product/${id}` );
-      if (!res.ok) throw new Error("خطا در بارگذاری محصولات");
-
-      const jsonData = await res.json();
-      setData(jsonData);
-      setLoading(false);
-
-      // اسکرول به پایین پس از بارگذاری داده‌ها
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    } catch (error) {
-      console.error(error.message);
-      setLoading(false);
-    }
-  };
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const jsonData = await getImageGallery(id);
+        if (isMounted) {
+          setData(jsonData);
+          if (jsonData.length > 0) {
+            setSelectedImage(jsonData[0].imageUrl);
+          }
+        }
+      } catch (error) {
+        console.error("خطا در fetchData:", error.message);
+        alert("خطا در دریافت داده‌ها");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
     fetchData();
-  }, []);
 
-    return (
-      
-               <section className="content-wrapper bg-white p-3 rounded-2 mb-4">
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
-{/* <!-- start vontent header --> */}
-<section className="content-header mb-3">
-      <Image
-                  src={data.imageUrl}
-                  alt={data.name}
-                  width={400}
-                  height={100}
-                  className="w-100 h-72 rounded"
-                />
-    <section className="d-flex justify-content-between align-items-center">
-        <h2 className="content-header-title content-header-title-small">
-            {data.name}
-        </h2>
-        <section className="content-header-link">
-            {/* <!--<a href="#">مشاهده همه</a>--> */}
+  return (
+    <section className="w-full md:w-1/3 p-4">
+      <section className="bg-white shadow rounded-2xl p-4">
+        <section className="product-gallery">
+          <section className="product-gallery-selected-image mb-4">
+            {loading ? (
+              <Skeleton key="skeleton" height={400} borderRadius={12} />
+            ) : (
+              <Image
+                key={selectedImage} // جلوگیری از رندر اشتباه
+                src={selectedImage}
+                alt="Selected Product"
+                width={500}
+                height={500}
+                className="w-full rounded-xl object-cover"
+              />
+            )}
+          </section>
+          <section className="product-gallery-thumbs flex gap-3 flex-wrap">
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={`thumb-${i}`} width={80} height={80} borderRadius={8} />
+                ))
+              : data.map((img) => (
+                  <Image
+                    key={img.imageUrl}
+                    src={img.imageUrl}
+                    alt={`Thumbnail ${img.name}`}
+                    width={100}
+                    height={100}
+                    className={`w-20 h-20 rounded-lg border cursor-pointer object-cover ${
+                      selectedImage === img.imageUrl
+                        ? "border-blue-500"
+                        : "border-gray-300"
+                    }`}
+                    onClick={() => setSelectedImage(img.imageUrl)}
+                  />
+                ))}
+          </section>
         </section>
+      </section>
     </section>
-</section>
-<section className="product-info">
-
-   
-    <p><i className="fa fa-shield-alt cart-product-selected-warranty me-1"></i> <span> گارانتی اصالت و سلامت فیزیکی کالا</span></p>
-    <p><i className="fa fa-store-alt cart-product-selected-store me-1"></i> <span>کالا موجود در انبار</span></p>
-    <p><a className="btn btn-light  btn-sm text-decoration-none" href="#"><i className="fa fa-heart text-danger"></i> افزودن به علاقه مندی</a></p>
-  
-    <p className="mb-3 mt-5">
-        <i className="fa fa-info-circle me-1"></i>
-
-{data.description}
-    </p>
-</section>
-</section>
-
- 
-    );
+  );
 };
 
-export default Productdetails;
+export default ProductGallery;
