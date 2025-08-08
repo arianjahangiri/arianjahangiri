@@ -14,7 +14,7 @@ export default function NotFoundPage() {
         <div className="text-red-500 mb-6">
           <FiAlertTriangle size={80} className="mx-auto" />
         </div>
-        
+        wadasdasd
         <h1 className="text-4xl font-bold text-gray-800 mb-4">صفحه مورد نظر یافت نشد!</h1>
         
         <p className="text-gray-600 mb-8 max-w-md mx-auto">
