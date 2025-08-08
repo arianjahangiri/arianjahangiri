@@ -13,7 +13,7 @@ export default function CartPage() {
       <main id="main-body-one-col" className="main-body">
         <h1 className="text-center py-5 container-xxl ">سبد خرید شما خالی است</h1>
         <Link href="/" className="btn btn-primary mt-3 ">بازگشت به صفحه اصلی</Link>
-      </main>
+      </main> 
     );
   }
 
@@ -115,7 +115,7 @@ export default function CartPage() {
                     ))}
                     
                   </section>
-                  
+                  sd
                 </section>
                  <section className="col-md-3">
                                 <section className="content-wrapper bg-white p-3 rounded-2 cart-total-price">
