@@ -27,10 +27,10 @@ const ProductCard = ({ product }) => {
 
   const stockStatus = product.stock > 0 ? product.stock : "ناموجود";
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart =async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product);
+   await addToCart(product);
   };
 
   return (
