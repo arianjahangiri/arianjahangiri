@@ -15,7 +15,7 @@ import {
  
  
 import { useCart } from "@/app/context/cartContext";
-import FavoriteButton from "./FavoriteButton";
+ 
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -122,7 +122,7 @@ const ProductCard = ({ product }) => {
             whileTap={{ scale: 0.95 }}
             className="p-2 rounded-full shadow-lg bg-white hover:bg-red-50 transition-all duration-300"
           >
-            <FavoriteButton productId={product._id} size={16} />
+          
           </motion.div>
           
           <motion.button
