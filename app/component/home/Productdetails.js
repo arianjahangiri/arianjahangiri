@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useProductView } from '@/app/hooks/useProductView';
+ 
 import { useCart } from '@/app/context/cartContext';
 
 const ProductDetailPage = () => {
@@ -10,7 +10,7 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
-  const { viewCount } = useProductView(id);
+ 
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -86,7 +86,7 @@ const ProductDetailPage = () => {
             <div className="flex items-center mb-4">
               <span className="text-sm text-gray-500 flex items-center">
                 <i className="fa fa-eye ml-1"></i>
-                {viewCount} بازدید
+               
               </span>
             </div>
 
