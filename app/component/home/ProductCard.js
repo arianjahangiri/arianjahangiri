@@ -13,8 +13,9 @@ import {
   FaBoxes
 } from "react-icons/fa";
  
-import FavoriteButton from "./FavoriteButton";
+ 
 import { useCart } from "@/app/context/cartContext";
+import FavoriteButton from "./FavoriteButton";
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
