@@ -31,8 +31,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     await connect();
-    const session = await get
-    ServerSession({ req, ...authOptions });
+    const session = await getServerSession({ req, ...authOptions });
     if (!session || !session.user) {
       return NextResponse.json({ error: "لطفا وارد شوید " }, { status: 401 });
     }
