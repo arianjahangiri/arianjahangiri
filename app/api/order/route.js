@@ -6,8 +6,7 @@ import Cart from "@/app/modls/cart/Cart";
 import Order from "@/app/modls/order/Order";
 import { authOptions } from "../auth/[...nextauth]/route";
 import connect from "@/app/utils/db";
-import product from "@/app/modls/catgory/product";
- 
+
 export async function POST(req) {
   try {
     await connect();
@@ -26,7 +25,7 @@ export async function POST(req) {
     const discountPrice = cart.discountPrice || 0;
     const finalPrice = totalPrice - discountPrice;
     const newOrder = await Order.create({
-      user: session.user.id, 
+      user: session.user.id,
       items: cart.items,
       finalPrice,
       totalPrice,
