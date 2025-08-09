@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import { getImageGallery } from '@/app/home/lib/ProductGallery/GetImage';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';

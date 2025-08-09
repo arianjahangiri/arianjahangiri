@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 
 const UpdateProduct = () => {
-  const { id } = useParams();
+  const Params = useParams();
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
   const [currentImage, setCurrentImage] = useState("");
@@ -20,7 +20,7 @@ const UpdateProduct = () => {
     const fetchProductData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`https://arianjahangiri.vercel.app/api/ProductGallery/${id}`);
+        const res = await fetch(`https://arianjahangiri.vercel.app/api/ProductGallery/${Params.id}`);
         const arr = await res.json();
          
 
@@ -66,7 +66,7 @@ const UpdateProduct = () => {
       formData.append("ProductID", category);
       if (image) formData.append("imageUrl", image);
 
-      const response = await fetch(`https://arianjahangiri.vercel.app/api/ProductGallery/${id}`, {
+      const response = await fetch(`https://arianjahangiri.vercel.app/api/ProductGallery/${Params.id}`, {
         method: "PUT",
         body: formData,
       });
