@@ -1,58 +1,186 @@
-
-"use client"
-import Image from 'next/image';
-import React from 'react';
- 
+"use client";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const Productdetails = () => {
-    return (
-      
-               <section className="content-wrapper bg-white p-3 rounded-2 mb-4">
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState("");
+  const [activeIdx, setActiveIdx] = useState(0);
 
-{/* <!-- start vontent header --> */}
-<section className="content-header mb-3">
-      <Image
-                  src={"/images/single-product/4.jpg"}
-                  alt="Selected Product"
-                  width={400}
-                  height={100}
-                  className="w-100 h-72 rounded"
+  const prams = useParams();
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setErrMsg("");
+      const res = await fetch(
+        `https://arianjahangiri.vercel.app/api/product/${prams.id}`
+      );
+      if (!res.ok) throw new Error("خطا در بارگذاری محصولات");
+
+      const jsonData = await res.json();
+      setData(jsonData);
+      setLoading(false);
+
+      // اسکرول به پایین پس از بارگذاری داده‌ها
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } catch (error) {
+      console.error(error.message);
+      setErrMsg(error.message || "خطای ناشناخته");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // گالری ساده: اگر images آرایه بود استفاده می‌شود، وگرنه از imageUrl تکی
+  const images = Array.isArray(data?.images)
+    ? data.images.filter(Boolean)
+    : data?.imageUrl
+    ? [data.imageUrl]
+    : [];
+
+  const activeImage =
+    images.length > 0 ? images[Math.min(activeIdx, images.length - 1)] : "";
+
+  return (
+    <section className="content-wrapper bg-white p-3 rounded-2 mb-4 shadow-sm">
+      {/* لودینگ اسکلتی ساده */}
+      {loading && (
+        <div>
+          <div className="placeholder-glow mb-3">
+            <span className="placeholder col-12 rounded-3" style={{ height: 280, display: "block" }} />
+          </div>
+          <div className="placeholder-glow mb-2">
+            <span className="placeholder col-6 rounded-2" />
+          </div>
+          <div className="placeholder-glow">
+            <span className="placeholder col-12 rounded-2" />
+            <span className="placeholder col-10 rounded-2" />
+            <span className="placeholder col-8 rounded-2" />
+          </div>
+        </div>
+      )}
+
+      {!loading && errMsg && (
+        <div className="alert alert-danger mb-3">{errMsg}</div>
+      )}
+
+      {!loading && !errMsg && (
+        <>
+          {/* هدر با تصویر بزرگ و عنوان */}
+          <section className="content-header mb-4">
+            <div className="position-relative rounded-3 overflow-hidden mb-3" style={{ minHeight: 280 }}>
+              {activeImage ? (
+                <Image
+                  src={activeImage}
+                  alt={data?.name || "Selected Product"}
+                  fill
+                  sizes="100vw"
+                  className="w-100 h-100 object-fit-contain bg-light"
                 />
-    <section className="d-flex justify-content-between align-items-center">
-        <h2 className="content-header-title content-header-title-small">
-            کتاب اثر مرکب نوشته دارن هاردی
-        </h2>
-        <section className="content-header-link">
-            {/* <!--<a href="#">مشاهده همه</a>--> */}
-        </section>
-    </section>
-</section>
-<section className="product-info">
+              ) : (
+                <div className="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                  <span className="text-muted">بدون تصویر</span>
+                </div>
+              )}
 
-    <p><span>رنگ : قهوه ای</span></p>
-    <p>
-        <span style={{backgroundColor : "#523e02"} }className="product-info-colors me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="قهوه ای تیره"></span>
-        <span style={{backgroundColor: "#0c4128" }} className="product-info-colors me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="سبز یشمی"></span>
-        <span style={{backgroundColor: "#fd7e14" }} className="product-info-colors me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="نارنجی پرتقالی"></span>
-    </p>
-    <p><i className="fa fa-shield-alt cart-product-selected-warranty me-1"></i> <span> گارانتی اصالت و سلامت فیزیکی کالا</span></p>
-    <p><i className="fa fa-store-alt cart-product-selected-store me-1"></i> <span>کالا موجود در انبار</span></p>
-    <p><a className="btn btn-light  btn-sm text-decoration-none" href="#"><i className="fa fa-heart text-danger"></i> افزودن به علاقه مندی</a></p>
-    <section>
-        <section className="cart-product-number d-inline-block ">
-            <button className="cart-number-down" type="button">-</button>
-            <input className="" type="number" min="1" max="5" step="1" value="1"readOnly="readonly"/>
-            <button className="cart-number-up" type="button">+</button>
-        </section>
-    </section>
-    <p className="mb-3 mt-5">
-        <i className="fa fa-info-circle me-1"></i>کاربر گرامی  خرید شما هنوز نهایی نشده است. برای ثبت سفارش و تکمیل خرید باید ابتدا آدرس خود را انتخاب کنید و سپس نحوه ارسال را انتخاب کنید. نحوه ارسال انتخابی شما محاسبه و به این مبلغ اضافه شده خواهد شد. و در نهایت پرداخت این سفارش صورت میگیرد. پس از ثبت سفارش کالا بر اساس نحوه ارسال که شما انتخاب کرده اید کالا برای شما در مدت زمان مذکور ارسال می گردد.
-    </p>
-</section>
-</section>
+              {/* نوار عنوان روی تصویر */}
+              <div
+                className="position-absolute bottom-0 start-0 end-0 p-3"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.5) 100%)",
+                  color: "#fff",
+                }}
+              >
+                <h2 className="h5 mb-1">{data?.name}</h2>
+                <div className="small text-white-50">
+                  گارانتی اصالت و سلامت فیزیکی کالا
+                </div>
+              </div>
+            </div>
 
- 
-    );
+            {/* بندانگشتی‌های گالری (در صورت وجود چند تصویر) */}
+            {images.length > 1 && (
+              <div className="d-flex gap-2 flex-wrap">
+                {images.map((src, idx) => (
+                  <button
+                    key={src + idx}
+                    type="button"
+                    className={`border bg-white rounded-2 p-1 ${
+                      activeIdx === idx ? "border-primary" : "border-light"
+                    }`}
+                    style={{ width: 64, height: 64 }}
+                    onClick={() => setActiveIdx(idx)}
+                    aria-label={`تصویر ${idx + 1}`}
+                    title={`تصویر ${idx + 1}`}
+                  >
+                    <div className="position-relative w-100 h-100">
+                      <Image
+                        src={src}
+                        alt={`thumb-${idx}`}
+                        fill
+                        sizes="64px"
+                        className="object-fit-contain rounded-1"
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* بدنه اطلاعات محصول */}
+          <section className="product-info">
+            <div className="row g-3">
+              <div className="col-12 col-lg-8">
+                <div className="mb-3">
+                  <i className="fa fa-store-alt cart-product-selected-store me-2 text-success" />
+                  <span className="fw-medium">کالا موجود در انبار</span>
+                </div>
+
+                <p className="mb-3">
+                  <i className="fa fa-info-circle me-2 text-secondary" />
+                  <span className="text-secondary">
+                    {data?.description || "توضیحاتی برای این محصول ثبت نشده است."}
+                  </span>
+                </p>
+              </div>
+
+              <div className="col-12 col-lg-4">
+                <div className="border rounded-3 p-3 h-100">
+                  <div className="d-flex flex-column gap-2">
+                    <a
+                      className="btn btn-outline-danger btn-sm text-decoration-none"
+                      href="#"
+                    >
+                      <i className="fa fa-heart me-2" />
+                      افزودن به علاقه‌مندی
+                    </a>
+
+                    {/* اگر قیمت داشت نمایش شکیل‌تر */}
+                    {typeof data?.price !== "undefined" && (
+                      <div className="mt-2">
+                        <div className="text-muted small mb-1">قیمت</div>
+                        <div className="h4 m-0 fw-bold">
+                          {Number(data?.price || 0).toLocaleString("fa-IR")} تومان
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+    </section>
+  );
 };
 
 export default Productdetails;
