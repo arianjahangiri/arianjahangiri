@@ -1,8 +1,9 @@
 "use client";
-import ProductGallery from "@/app/modls/ProductGallery/ProductGallery";
+ 
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import ProductGallery from "./ProductGallery";
 
 const Productdetails = () => {
   const [data, setData] = useState([]);
