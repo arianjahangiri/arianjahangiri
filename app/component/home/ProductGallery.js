@@ -1,23 +1,22 @@
 "use client";
- 
-import { getImageGallery } from '@/app/home/lib/ProductGallery/GetImage';
+
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-const ProductGallery = ({id}) => {
+const ProductGallery = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const route = useRouter();
- 
- 
+  const params = useParams();
+  const productId = params.id;
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const jsonData = await getImageGallery(id);
+      const jsonData = await getImageGallery(productId);
       setData(jsonData);
     } catch (error) {
       console.error("خطا در fetchData:", error.message);
@@ -48,7 +47,6 @@ const ProductGallery = ({id}) => {
               <Skeleton height={400} borderRadius={12} />
             ) : (
               <Image
-                key={selectedImage} // جلوگیری از رندر اشتباه
                 src={selectedImage}
                 alt="Selected Product"
                 width={500}

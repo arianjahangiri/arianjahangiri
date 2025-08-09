@@ -108,7 +108,7 @@ const Productdetails = () => {
             </div>
 
             {/* بندانگشتی‌های گالری (در صورت وجود چند تصویر) */}
-         <ProductGallery   id={data?._id} />
+         <ProductGallery   poroductId={data?._id} />
           </section>
 
           {/* بدنه اطلاعات محصول */}

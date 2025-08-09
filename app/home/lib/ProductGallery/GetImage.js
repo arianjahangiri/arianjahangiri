@@ -2,7 +2,7 @@ export async function getImageGallery(poroductId) {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/ProductGallery?ProductID=${poroductId}`,
       { 
-        // cache: "force-cache",
+      
   
       }
     );
