@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaEye, FaCartPlus, FaSearch, FaTags, FaBoxOpen, FaBoxes } from "react-icons/fa";
 import { useCart } from "@/app/context/cartContext";
-import FavoriteButton from "./FavoriteButton";
+ 
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -98,9 +98,7 @@ const ProductCard = ({ product }) => {
             <FaCartPlus size={16} />
           </motion.button>
 
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="p-2 rounded-full shadow-lg bg-white hover:bg-red-50 transition-all duration-300">
-            {product?._id && <FavoriteButton productId={String(product._id)} size={16} />}
-          </motion.div>
+   
 
           <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} title="نمایش جزئیات" className="p-2 rounded-full shadow-lg bg-white hover:bg-yellow-500 hover:text-white transition-all duration-300">
             <Link href={`/component/products/${product?._id}`}>
