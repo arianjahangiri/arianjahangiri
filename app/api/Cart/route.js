@@ -4,84 +4,64 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import Product from "@/app/modls/catgory/product";
 import Cart from "@/app/modls/cart/Cart";
-import mongoose from "mongoose";
 
-export async function GET() {
+ 
+export async function GET(req) {
   try {
     await connect();
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const session = await getServerSession({ req, ...authOptions });
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     let cart = await Cart.findOne({ user: session.user.id }).populate("items.product");
     if (!cart) {
-      cart = new Cart({ user: session.user.id, items: [] });
+      cart = new Cart({
+        user: session.user.id,
+        items: [],
+      });
       await cart.save();
     }
     return NextResponse.json(cart);
-  } catch (err) {
-    console.error("GET /api/Cart error:", err);
+  } catch (error) {
     return NextResponse.json({ error: "Error fetching cart items" }, { status: 500 });
   }
 }
 
+ 
 export async function POST(req) {
   try {
     await connect();
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const session = await getServerSession({ req, ...authOptions });
+    if (!session || !session.user) {
       return NextResponse.json({ error: "لطفا وارد شوید " }, { status: 401 });
     }
-
-    const body = await req.json();
-    const productIdRaw = body?.productId;
-    const quantity = Number(body?.quantity);
-
-    // اگر کل آبجکت محصول به اشتباه ارسال شد، از _id بردار
-    const productId =
-      typeof productIdRaw === "object" && productIdRaw?._id
-        ? String(productIdRaw._id).trim()
-        : String(productIdRaw || "").trim();
-
-    if (!productId || Number.isNaN(quantity) || quantity === 0) {
+    const { productId, quantity } = await req.json();
+    if (!productId || isNaN(quantity) || quantity === 0) { // فقط صفر را رد کن
       return NextResponse.json({ error: " مقادیر نامعتبر است " }, { status: 400 });
     }
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return NextResponse.json({ error: "شناسه محصول نامعتبر است" }, { status: 400 });
-    }
-
     const product = await Product.findById(productId);
     if (!product) {
       return NextResponse.json({ error: "محصول یافت نشد" }, { status: 404 });
     }
-
-    const pid = new mongoose.Types.ObjectId(productId);
-
-    // ابتدا تلاش کن تعداد آیتم موجود را افزایش/کاهش دهی
-    const incRes = await Cart.updateOne(
-      { user: session.user.id, "items.product": pid },
-      { $inc: { "items.$.quantity": quantity } }
-    );
-
-    if (incRes.matchedCount > 0) {
-      // اگر تعداد به صفر/منفی رسید حذفش کن
-      await Cart.updateOne(
-        { user: session.user.id },
-        { $pull: { items: { product: pid, quantity: { $lte: 0 } } } }
-      );
-    } else if (quantity > 0) {
-      // آیتم نبود و quantity مثبت است: اضافه کن (upsert)
-      await Cart.updateOne(
-        { user: session.user.id },
-        { $setOnInsert: { user: session.user.id }, $push: { items: { product: pid, quantity } } },
-        { upsert: true }
-      );
+    let cart = await Cart.findOne({ user: session.user.id });
+    if (!cart) {
+      cart = new Cart({ user: session.user.id, items: [] });
     }
-
-    const cart = await Cart.findOne({ user: session.user.id }).populate("items.product");
+    const existingItem = cart.items.find(item => item.product.toString() === productId);
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+      if (newQuantity <= 0) {
+        cart.items = cart.items.filter(item => item.product.toString() !== productId);
+      } else {
+        existingItem.quantity = newQuantity;
+        
+      }
+    } else {
+      cart.items.push({ product: productId, quantity , });
+    }
+    await cart.save();
     return NextResponse.json(cart);
-  } catch (err) {
-    console.error("POST /api/Cart error:", err);
+  } catch (error) {
     return NextResponse.json({ error: "خطایی در اضافه کردن به سبد خرید پیش آمده است" }, { status: 500 });
   }
 }
@@ -89,22 +69,22 @@ export async function POST(req) {
 export async function DELETE(req) {
   try {
     await connect();
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const session = await getServerSession({ req, ...authOptions });
+    if (!session || !session.user) {
       return NextResponse.json({ error: "لطفا وارد شوید " }, { status: 401 });
     }
     const { productId } = await req.json();
-    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+    if (!productId) {
       return NextResponse.json({ error: "مقدار نامعتبر است" }, { status: 400 });
     }
-    await Cart.updateOne(
-      { user: session.user.id },
-      { $pull: { items: { product: new mongoose.Types.ObjectId(productId) } } }
-    );
-    const cart = await Cart.findOne({ user: session.user.id }).populate("items.product");
+    let cart = await Cart.findOne({ user: session.user.id });
+    if (!cart) {
+      return NextResponse.json({ error: "سبد خرید یافت نشد" }, { status: 404 });
+    }
+    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+    await cart.save();
     return NextResponse.json(cart);
-  } catch (err) {
-    console.error("DELETE /api/Cart error:", err);
+  } catch (error) {
     return NextResponse.json({ error: " خطایی در حذف از سبد خرید پیش امده است " }, { status: 500 });
   }
 }
