@@ -1,30 +1,34 @@
-"use client"
-import { useCart } from '@/app/context/cartContext';
+"use client";
 
-import React, { useState } from 'react';
- 
+import { useCart } from "@/app/context/cartContext";
+import React, { useState, useEffect } from "react";
 
-const AddTOCartButton = ({productId}) => {
-    const {addToCart,error}=useCart();
-    const [loading ,setLoading]=useState(false);
-    const [localErrore,setlocalErrore]=useState(null) 
-   const HandelAddToCart=async() => {
-     setLoading(true)
-     setlocalErrore(null)
-     await addToCart(productId,1 )
-     if (error){
-        setlocalErrore(error) 
-     }
-     setLoading(false)
-   };
-    return (
-        <div>
-                <section className=" bg-danger">
-                                        <button disabled={loading} onClick={HandelAddToCart} href="#" className="btn btn-danger d-block">{loading ? "درحال افزودن ...": "افزودن به سبد خرید"} </button>
-                                        {localErrore&& <p className='text-danger text-lg m-9   '>{localErrore}</p>}
-                                    </section>
-        </div>
-    );
+const AddToCartButton = ({ productId }) => {
+  const { addToCart, error } = useCart();
+  const [loading, setLoading] = useState(false);
+  const [localError, setLocalError] = useState(null);
+
+  useEffect(() => {
+    if (error) setLocalError(error);
+  }, [error]);
+
+  const handleAddToCart = async (e) => {
+    e?.preventDefault?.();
+    if (!productId) return;
+    setLoading(true);
+    setLocalError(null);
+    await addToCart(String(productId), 1);
+    setLoading(false);
+  };
+
+  return (
+    <section>
+      <button disabled={loading} onClick={handleAddToCart} className="btn btn-danger d-block">
+        {loading ? "درحال افزودن ..." : "افزودن به سبد خرید"}
+      </button>
+      {localError && <p className="text-danger text-lg m-3">{localError}</p>}
+    </section>
+  );
 };
- 
-export default AddTOCartButton;
+
+export default AddToCartButton;
