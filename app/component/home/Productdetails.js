@@ -1,4 +1,5 @@
 "use client";
+import ProductGallery from "@/app/modls/ProductGallery/ProductGallery";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -106,33 +107,7 @@ const Productdetails = () => {
             </div>
 
             {/* بندانگشتی‌های گالری (در صورت وجود چند تصویر) */}
-            {images.length > 1 && (
-              <div className="d-flex gap-2 flex-wrap">
-                {images.map((src, idx) => (
-                  <button
-                    key={src + idx}
-                    type="button"
-                    className={`border bg-white rounded-2 p-1 ${
-                      activeIdx === idx ? "border-primary" : "border-light"
-                    }`}
-                    style={{ width: 64, height: 64 }}
-                    onClick={() => setActiveIdx(idx)}
-                    aria-label={`تصویر ${idx + 1}`}
-                    title={`تصویر ${idx + 1}`}
-                  >
-                    <div className="position-relative w-100 h-100">
-                      <Image
-                        src={src}
-                        alt={`thumb-${idx}`}
-                        fill
-                        sizes="64px"
-                        className="object-fit-contain rounded-1"
-                      />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
+         <ProductGallery  ProductID={data?._id} />
           </section>
 
           {/* بدنه اطلاعات محصول */}
