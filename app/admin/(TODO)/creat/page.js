@@ -9,7 +9,7 @@ const page = () => {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`https://arianjahangiri.vercel.app/Posts`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/Posts`, {
         method: 'POST',
         body: JSON.stringify({
           title: data

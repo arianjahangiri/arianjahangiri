@@ -13,7 +13,7 @@ const Page = () => {
   // Fetch user data from the server
   const fetchData = async () => {
     try {
-      const res = await fetch("https://arianjahangiri.vercel.app/api/User");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/User`);
       if (!res.ok) throw new Error("خطا در بارگیری کاربران");
       const jsonData = await res.json();
       setData(jsonData);
@@ -33,7 +33,7 @@ const Page = () => {
     if (!IDEdite) return; // If no user ID, exit
 
     try {
-      const res = await fetch(`https://arianjahangiri.vercel.app/api/User/${IDEdite}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/User/${IDEdite}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isAdmin: statusNew }), // Send the new status
@@ -56,7 +56,7 @@ const Page = () => {
   // Handle user deletion
   const handleDelete = async (id) => {
     try {
-      await fetch(`https://arianjahangiri.vercel.app/api/User/${id}`, { method: "DELETE" });
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/User/${id}`, { method: "DELETE" });
       setData((prevData) => prevData.filter((user) => user._id !== id)); // Remove the deleted user from the list
     } catch (error) {
       console.error("Error deleting user:", error);

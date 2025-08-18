@@ -13,7 +13,7 @@ const page = () => {
 
   const fetchdel = async (id) => {
     try {
-      await fetch(`https://arianjahangiri.vercel.appi.vercel.app/Posts/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/Posts/${id}`, {
         method: "DELETE",
       });
 

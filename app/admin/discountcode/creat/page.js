@@ -38,11 +38,11 @@ const Page = () => {
     if (Object.keys(formErrors).length > 0) {  
       setErrors(formErrors);  
       return;  
-    }  
+    } 
 
     try {  
       // Sending the form data to the server  
-      await fetch("https://arianjahangiri.vercel.apptCode", {  
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/discountCode`, {  
         method: "POST",  
         body: JSON.stringify({ status, Translations, discountPercentage, discountcode }),  
         headers: { "Content-Type": "application/json" },  

@@ -24,7 +24,7 @@ const UpdateProduct = () => {
     const fetchProductData = async () => {
       setLoading(true);
       try {
-        const productResponse = await fetch(`https://arianjahangiri.vercel.app/api/product/${id}` );
+        const productResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product/${id}` );
         const productData = await productResponse.json();
         setName(productData.name);
         setDescription(productData.description);
@@ -33,7 +33,7 @@ const UpdateProduct = () => {
         setCategory(productData.category);
         setCurrentImage(productData.imageUrl);
 
-        const categoriesResponse = await fetch(" https://arianjahangiri.vercel.app/api/categories/home-menu");
+        const categoriesResponse = await fetch(` ${process.env.NEXT_PUBLIC_BASE_URL}/api/categories/home-menu`);
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
       } catch (error) {
@@ -98,7 +98,7 @@ const UpdateProduct = () => {
         formData.append("imageUrl", image);
       }
 
-      const response = await fetch(`https://arianjahangiri.vercel.app/api/product/${id}` , {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product/${id}` , {
         method: "PUT",
         body: formData,
       });

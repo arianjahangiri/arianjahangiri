@@ -24,7 +24,7 @@ const EditDiscountPage = () => {
   // Fetch the discount data from the backend
   const fetchDiscountData = async () => {
     try {
-      const res = await fetch(`https://arianjahangiri.vercel.app/api/discountCode/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/discountCode/${id}`);
       if (!res.ok) throw new Error("Failed to load data");
       const jsonData = await res.json();
       setData(jsonData);
@@ -57,7 +57,7 @@ const EditDiscountPage = () => {
 
     try {
       // Update the discount information on the server
-      await fetch(`https://arianjahangiri.vercel.app/api/discountCode/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/discountCode/${id}`, {
         method: "PUT",
         body: JSON.stringify({ status, Translations, discountPercentage, discountcode }),
         headers: { "Content-Type": "application/json" },

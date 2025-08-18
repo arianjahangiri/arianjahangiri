@@ -8,7 +8,7 @@ import AddTOCartButton from '../../home/AddTOCartButton';
 
 async function getProductData(id) {
   const res = await fetch(
-    `https://arianjahangiri.vercel.app/api/product/${id}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/${id}`,
     {
       next: { revalidate: 60 },
       cache: "force-cache",

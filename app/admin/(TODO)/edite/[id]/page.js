@@ -12,7 +12,7 @@ const EditPostPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`https://arianjahangiri.vercel.app/Posts/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/Posts/${id}`);
         if (!res.ok) throw new Error("خطا در بارگذاری پست‌ها");
 
         const jsonData = await res.json();
@@ -27,7 +27,7 @@ const EditPostPage = () => {
 
   const updatePost = async () => {
     try {
-      const res = await fetch(`https://arianjahangiri.vercel.app/Posts/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/Posts/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: data }),

@@ -17,7 +17,7 @@ const EditUser = ({ id }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`https://arianjahangiri.vercel.app/api/User/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/User/${id}`);
         if (!res.ok) throw new Error("خطا در بارگذاری اطلاعات کاربر");
 
         const jsonData = await res.json();

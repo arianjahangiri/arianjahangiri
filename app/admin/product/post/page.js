@@ -16,7 +16,7 @@ const Page = () => {
   const fetchDel = async (id) => {
     if (!window.confirm("آیا از حذف این محصول مطمئن هستید؟")) return;
     try {
-      await fetch(`https://arianjahangiri.vercel.app/api/product/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product/${id}`, {
         method: "DELETE",
       });
       fetchData();
@@ -28,7 +28,7 @@ const Page = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("https://arianjahangiri.vercel.app/api/product");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product`);
       if (!res.ok) throw new Error("خطا در بارگذاری محصولات");
 
       const jsonData = await res.json();
