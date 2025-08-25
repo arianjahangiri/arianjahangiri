@@ -2,8 +2,7 @@ export async function getFeaturedProducts() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/featured`,
     { 
-      next: { revalidate: 60 },
-      cache: "force-cache",
+       
 
     }
   );

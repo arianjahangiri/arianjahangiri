@@ -140,7 +140,7 @@ const MyOrder = () => {
                   <h3 className="text-lg font-medium mb-2">سفارشی ثبت نشده</h3>
                   <p className="text-gray-400 mb-4">{filter === "همه" ? "شما هنوز سفارشی ثبت نکرده‌اید." : `هیچ سفارشی با وضعیت '${filter}' یافت نشد.`}</p>
                   <Link
-                    href="/products"
+                    href="/product"
                     className="inline-flex px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                   >
                     مشاهده محصولات
